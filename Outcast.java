@@ -39,7 +39,7 @@ public class Outcast {
      * 
      * @param nouns
      * @throws NullPointerException if {@code nouns == null}
-     * @return 
+     * @return an outcast
      */
     public String outcast(String[] nouns) {
        if (nouns == null) throw new java.lang.NullPointerException();
