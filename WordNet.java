@@ -38,7 +38,7 @@ public class WordNet {
     /**
      * Returns all WordNet nouns.
      * 
-     * @return 
+     * @return all WordNet nouns
      */
     public Iterable<String> nouns() {
 
@@ -49,7 +49,8 @@ public class WordNet {
      * 
      * @param word
      * @throws NullPointerException if {@code word == null}
-     * @return 
+     * @return {@code true} if <em>word</em> is a WordNet noun,
+     *         {@code false} otherwise
      */
     public boolean isNoun(String word) {
         if (word == null) throw new java.lang.NullPointerException();
@@ -58,11 +59,11 @@ public class WordNet {
     /**
      * Distance between nounA and nounB (defined below)
      * 
-     * @param nounA
+     * @param nounA 
      * @param nounB
      * @throws NullPointerException if {@code nounA == null}
      * @throws NullPointerException if {@code nounB == null}
-     * @return 
+     * @return the distance between <em>nounA</em> and <em>nounB</em>
      */
     public int distance(String nounA, String nounB) {
         if (nounA == null | nounB == null) 
@@ -77,7 +78,8 @@ public class WordNet {
      * @param nounB
      * @throws NullPointerException if {@code nounA == null}
      * @throws NullPointerException if {@code nounB == null}
-     * @return 
+     * @return a synset that is the common ancestor of <em>nounA</em> and
+     *         <em>nounB</em> in a shortest ancestral path
      */
     public String sap(String nounA, String nounB) {
         if (nounA == null | nounB == null) 
