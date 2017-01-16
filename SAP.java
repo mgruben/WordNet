@@ -26,7 +26,7 @@ import edu.princeton.cs.algs4.StdOut;
  * @author Michael <GrubenM@GMail.com>
  */
 public class SAP {
-
+    Digraph G;
     /**
      * Constructor takes a digraph (not necessarily a DAG).
      * 
@@ -35,6 +35,7 @@ public class SAP {
      */
     public SAP(Digraph G) {
         if (G == null) throw new java.lang.NullPointerException();
+        this.G = G;
     }
 
     /**
@@ -42,11 +43,14 @@ public class SAP {
      * 
      * @param v
      * @param w
+     * @throws IndexOutOfBoundsException if <em>v</em> or <em>w</em> is outside
+     *         of the range {@code [0, G.V() - 1)}
      * @return the length of the shortest ancestral path between <em>v</em> and
      *         <em>w</em>; {@code -1} if no such path exists
      */
     public int length(int v, int w) {
-
+        if (v < 0 || v >= G.V() || w < 0 || w >= G.V())
+            throw new java.lang.IndexOutOfBoundsException();
     }
 
     /**
@@ -55,12 +59,15 @@ public class SAP {
      * 
      * @param v
      * @param w
+     * @throws IndexOutOfBoundsException if <em>v</em> or <em>w</em> is outside
+     *         of the range {@code [0, G.V() - 1)}
      * @return the synset ID of the common ancestor of <em>v</em> and <em>w</em>
      *         that participates in a shortest ancestral path; {@code -1} if no
      *         such path
      */
     public int ancestor(int v, int w) {
-
+        if (v < 0 || v >= G.V() || w < 0 || w >= G.V())
+            throw new java.lang.IndexOutOfBoundsException();
     }
 
     /**
@@ -70,12 +77,18 @@ public class SAP {
      * @param w
      * @throws NullPointerException if {@code v == null}
      * @throws NullPointerException if {@code w == null}
+     * @throws IndexOutOfBoundsException if any vertex in <em>v</em> or
+     *         <em>w</em> is outside of the range {@code [0, G.V() - 1)}
      * @return the length of the shortest ancestral path between any vertex in
      *         <em>v</em> and any vertex in <em>w</em>; {@code -1} if no
      *         such path
      */
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
         if (v == null | w == null) throw new java.lang.NullPointerException();
+        for (int i: v) if (i < 0 || i >= G.V())
+            throw new java.lang.IndexOutOfBoundsException();
+        for (int i: w) if (i < 0 || i >= G.V())
+            throw new java.lang.IndexOutOfBoundsException();
     }
 
     /**
@@ -85,12 +98,18 @@ public class SAP {
      * @param w
      * @throws NullPointerException if {@code v == null}
      * @throws NullPointerException if {@code w == null}
+     * @throws IndexOutOfBoundsException if any vertex in <em>v</em> or
+     *         <em>w</em> is outside of the range {@code [0, G.V() - 1)}
      * @return the synset ID of a common ancestor that participates in a 
      *         shortest ancestral path between any vertex in <em>v</em> and
      *         any vertex in <em>w</em>; {@code -1} if no such path
      */
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
         if (v == null | w == null) throw new java.lang.NullPointerException();
+        for (int i: v) if (i < 0 || i >= G.V())
+            throw new java.lang.IndexOutOfBoundsException();
+        for (int i: w) if (i < 0 || i >= G.V())
+            throw new java.lang.IndexOutOfBoundsException();
     }
 
     // do unit testing of this class
