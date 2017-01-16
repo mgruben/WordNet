@@ -29,6 +29,8 @@ public class WordNet {
      * @param hypernyms 
      * @throws NullPointerException if {@code synsets == null}
      * @throws NullPointerException if {@code hypernyms == null}
+     * @throws IllegalArgumentException if the input does not correspond to a
+     *         rooted DAG
      */
     public WordNet(String synsets, String hypernyms) {
         if (synsets == null | hypernyms == null)
@@ -63,6 +65,8 @@ public class WordNet {
      * @param nounB
      * @throws NullPointerException if {@code nounA == null}
      * @throws NullPointerException if {@code nounB == null}
+     * @throws IllegalArgumentException if either <em>nounA</em> or
+     *         <em>nounB</em> are not WordNet nouns
      * @return the distance between <em>nounA</em> and <em>nounB</em>
      */
     public int distance(String nounA, String nounB) {
@@ -78,6 +82,8 @@ public class WordNet {
      * @param nounB
      * @throws NullPointerException if {@code nounA == null}
      * @throws NullPointerException if {@code nounB == null}
+     * @throws IllegalArgumentException if either <em>nounA</em> or
+     *         <em>nounB</em> are not WordNet nouns
      * @return a synset that is the common ancestor of <em>nounA</em> and
      *         <em>nounB</em> in a shortest ancestral path
      */
