@@ -1,3 +1,9 @@
+
+import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdIn;
+import edu.princeton.cs.algs4.StdOut;
+
 /*
  * Copyright (C) 2017 Michael <GrubenM@GMail.com>
  *
@@ -21,27 +27,61 @@
  */
 public class SAP {
 
-    // constructor takes a digraph (not necessarily a DAG)
+    /**
+     * Constructor takes a digraph (not necessarily a DAG).
+     * 
+     * @param G 
+     * @throws NullPointerException if {@code G == null}
+     */
     public SAP(Digraph G) {
         if (G == null) throw new java.lang.NullPointerException();
     }
 
-    // length of shortest ancestral path between v and w; -1 if no such path
+    /**
+     * Length of shortest ancestral path between v and w; -1 if no such path.
+     * 
+     * @param v
+     * @param w
+     * @return 
+     */
     public int length(int v, int w) {
 
     }
 
-    // a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path
+    /**
+     * A common ancestor of v and w that participates in a shortest ancestral
+     * path; -1 if no such path.
+     * 
+     * @param v
+     * @param w
+     * @return 
+     */
     public int ancestor(int v, int w) {
 
     }
 
-    // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
+    /**
+     * Length of shortest ancestral path between any vertex in v and any vertex
+     * in w; -1 if no such path.
+     * @param v
+     * @param w
+     * @throws NullPointerException if {@code v == null}
+     * @throws NullPointerException if {@code w == null}
+     * @return 
+     */
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
         if (v == null | w == null) throw new java.lang.NullPointerException();
     }
 
-    // a common ancestor that participates in shortest ancestral path; -1 if no such path
+    /**
+     * A common ancestor that participates in shortest ancestral path; -1 if no
+     * such path.
+     * @param v
+     * @param w
+     * @throws NullPointerException if {@code v == null}
+     * @throws NullPointerException if {@code w == null}
+     * @return 
+     */
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
         if (v == null | w == null) throw new java.lang.NullPointerException();
     }

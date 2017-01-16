@@ -1,3 +1,7 @@
+
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdOut;
+
 /*
  * Copyright (C) 2017 Michael <GrubenM@GMail.com>
  *
@@ -20,12 +24,23 @@
  * @author Michael <GrubenM@GMail.com>
  */
 public class Outcast {
-    // constructor takes a WordNet object
+    /**
+     * Constructor takes a WordNet object.
+     * 
+     * @param wordnet 
+     * @throws NullPointerException if {@code wordnet == null}
+     */
     public Outcast(WordNet wordnet) {
         if (wordnet == null) throw new java.lang.NullPointerException();
     }
     
-    // given an array of WordNet nouns, return an outcast
+    /**
+     * Given an array of WordNet nouns, return an outcast.
+     * 
+     * @param nouns
+     * @throws NullPointerException if {@code nouns == null}
+     * @return 
+     */
     public String outcast(String[] nouns) {
        if (nouns == null) throw new java.lang.NullPointerException();
     }

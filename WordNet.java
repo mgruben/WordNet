@@ -21,30 +21,64 @@
  */
 public class WordNet {
 
-    // constructor takes the name of the two input files
+    /**
+     * Takes the name of the two input files.
+     * 
+     * 
+     * @param synsets
+     * @param hypernyms 
+     * @throws NullPointerException if {@code synsets == null}
+     * @throws NullPointerException if {@code hypernyms == null}
+     */
     public WordNet(String synsets, String hypernyms) {
         if (synsets == null | hypernyms == null)
             throw new java.lang.NullPointerException();
     }
 
-    // returns all WordNet nouns
+    /**
+     * Returns all WordNet nouns.
+     * 
+     * @return 
+     */
     public Iterable<String> nouns() {
 
     }
 
-    // is the word a WordNet noun?
+    /**
+     * Is the word a WordNet noun?
+     * 
+     * @param word
+     * @throws NullPointerException if {@code word == null}
+     * @return 
+     */
     public boolean isNoun(String word) {
         if (word == null) throw new java.lang.NullPointerException();
     }
 
-    // distance between nounA and nounB (defined below)
+    /**
+     * Distance between nounA and nounB (defined below)
+     * 
+     * @param nounA
+     * @param nounB
+     * @throws NullPointerException if {@code nounA == null}
+     * @throws NullPointerException if {@code nounB == null}
+     * @return 
+     */
     public int distance(String nounA, String nounB) {
         if (nounA == null | nounB == null) 
             throw new java.lang.NullPointerException();
     }
 
-    // a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB
-    // in a shortest ancestral path (defined below)
+    /**
+     * A synset (second field of synsets.txt) that is the common ancestor of
+     * nounA and nounB in a shortest ancestral path (defined below).
+     * 
+     * @param nounA
+     * @param nounB
+     * @throws NullPointerException if {@code nounA == null}
+     * @throws NullPointerException if {@code nounB == null}
+     * @return 
+     */
     public String sap(String nounA, String nounB) {
         if (nounA == null | nounB == null) 
             throw new java.lang.NullPointerException();
