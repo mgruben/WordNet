@@ -82,10 +82,10 @@ public class SAP {
      * This method leaves the BFS state fields in a dirty state; each method
      * that calls this method is responsible for cleaning the BFS itself.
      * 
-     * @param v The synset IDs of the first synset family in the parallel BFS
-     * @param w The synset IDs of the other synset family in the parallel BFS
+     * @param V The synset IDs of the first synset family in the parallel BFS
+     * @param W The synset IDs of the other synset family in the parallel BFS
      */
-    private void parallelBFS(Iterable<Integer> v, Iterable<Integer> w) {
+    private void parallelBFS(Iterable<Integer> V, Iterable<Integer> W) {
         
         /**
          * Note that, although we're enqueueing all synsets from V family first,
@@ -101,19 +101,19 @@ public class SAP {
          */
         
         // enqueue synsets from our first family to search; mark them as seen
-        for (int i: v) {
-            vert.enqueue(i);
-            marked.push(i);
-            distTo[i] = 0;
-            fam[i] = (char) -1;
+        for (int v: V) {
+            vert.enqueue(v);
+            marked.push(v);
+            distTo[v] = 0;
+            fam[v] = (char) -1;
         }
         
         // enqueue synsets from our other family to search; mark them as seen
-        for (int i: w) {
-            vert.enqueue(i);
-            marked.push(i);
-            distTo[i] = 0;
-            fam[i] = (char) 1;
+        for (int w: W) {
+            vert.enqueue(w);
+            marked.push(w);
+            distTo[w] = 0;
+            fam[w] = (char) 1;
         }
         
         // conduct parallel BFS for shortest ancestral path
@@ -229,8 +229,8 @@ public class SAP {
      * Length of shortest ancestral path between any vertex in v and any vertex
      * in w; -1 if no such path.
      * 
-     * @param v The synset ID of the first synset in the sap
-     * @param w The synset ID of the other synset in the sap
+     * @param V The synset ID of the first synset in the sap
+     * @param W The synset ID of the other synset in the sap
      * @throws NullPointerException if {@code v == null}
      * @throws NullPointerException if {@code w == null}
      * @throws IndexOutOfBoundsException if any vertex in <em>v</em> or
@@ -239,20 +239,21 @@ public class SAP {
      *         <em>v</em> and any vertex in <em>w</em>; {@code -1} if no
      *         such path
      */
-    public int length(Iterable<Integer> v, Iterable<Integer> w) {
-        if (v == null | w == null) throw new java.lang.NullPointerException();
-        for (int i: v) if (i < 0 || i >= G.V())
+    public int length(Iterable<Integer> V, Iterable<Integer> W) {
+        if (V == null | W == null) throw new java.lang.NullPointerException();
+        for (int v: V) if (v < 0 || v >= G.V())
             throw new java.lang.IndexOutOfBoundsException();
-        for (int i: w) if (i < 0 || i >= G.V())
+        for (int w: W) if (w < 0 || w >= G.V())
             throw new java.lang.IndexOutOfBoundsException();
+        
     }
 
     /**
      * A common ancestor that participates in shortest ancestral path; -1 if no
      * such path.
      * 
-     * @param v The synset ID of the first synset in the sap
-     * @param w The synset ID of the other synset in the sap
+     * @param V The synset ID of the first synset in the sap
+     * @param W The synset ID of the other synset in the sap
      * @throws NullPointerException if {@code v == null}
      * @throws NullPointerException if {@code w == null}
      * @throws IndexOutOfBoundsException if any vertex in <em>v</em> or
@@ -261,12 +262,13 @@ public class SAP {
      *         shortest ancestral path between any vertex in <em>v</em> and
      *         any vertex in <em>w</em>; {@code -1} if no such path
      */
-    public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
-        if (v == null | w == null) throw new java.lang.NullPointerException();
-        for (int i: v) if (i < 0 || i >= G.V())
+    public int ancestor(Iterable<Integer> V, Iterable<Integer> W) {
+        if (V == null | W == null) throw new java.lang.NullPointerException();
+        for (int v: V) if (v < 0 || v >= G.V())
             throw new java.lang.IndexOutOfBoundsException();
-        for (int i: w) if (i < 0 || i >= G.V())
+        for (int w: W) if (w < 0 || w >= G.V())
             throw new java.lang.IndexOutOfBoundsException();
+
     }
 
     // do unit testing of this class
