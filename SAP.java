@@ -2,6 +2,7 @@
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Queue;
+import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 import java.util.Arrays;
@@ -30,6 +31,8 @@ import java.util.Arrays;
 public class SAP {
     Digraph G;
     private int[] distTo;
+    private int[] edgeTo;
+    
     /**
      * Constructor takes a digraph (not necessarily a DAG).
      * 
@@ -46,8 +49,12 @@ public class SAP {
         // Create a vertex-indexed array to keep track of distances and marking
         distTo = new int[this.G.V()];
         
+        // Create a vertex-indexed array to help us erase our tracks after BFS
+        edgeTo = new int[this.G.V()];
+        
         // Adopt the convention that -1 means that this vertex is unmarked
         Arrays.fill(distTo, -1);
+        Arrays.fill(edgeTo, -1);
     }
 
     /**
@@ -64,20 +71,29 @@ public class SAP {
         if (v < 0 || v >= G.V() || w < 0 || w >= G.V())
             throw new java.lang.IndexOutOfBoundsException();
         
+        // Our value to return, initialized to "no such path"
+        int ans = -1;
+        
+        // Initialize data structure to help unmark marked vertices
+        Stack<Integer> marked = new Stack<>();
+        
         // Initialize parallel queues for vertices and their distances
         Queue<Integer> vert = new Queue<>();
         Queue<Integer> dist = new Queue<>();
         
         // enqueue our first synset to search and mark it as seen
         vert.enqueue(v);
+        marked.push(v);
         dist.enqueue(0);
         distTo[v] = 0;
         
         // enqueue our other synset to search and mark it as seen
         vert.enqueue(w);
+        marked.push(w);
         dist.enqueue(0);
         distTo[w] = 0;
         
+        // conduct parallel BFS for shortest ancestral path
         while (!vert.isEmpty()) {
             int i = vert.dequeue();
             int d = dist.dequeue();
@@ -86,10 +102,28 @@ public class SAP {
                     vert.enqueue(adj);
                     dist.enqueue(d + 1);
                     distTo[adj] = d + 1;
+                    edgeTo[adj] = i;
+                }
+                
+                // We've collided, indicating the existence of a common ancestor
+                else {
+                    
+                    // Store our answer to return
+                    ans = d + 1 + distTo[adj];
+                    
+                    // unmark all marked vertices to efficiently re-initialize
+                    while (!marked.isEmpty()) {
+                        int m = marked.pop();
+                        distTo[m] = -1;
+                        edgeTo[m] = -1;
+                    }
+                    
+                    // return the answer
+                    return ans;
                 }
             }
         }
-        
+        return ans;
     }
 
     /**
