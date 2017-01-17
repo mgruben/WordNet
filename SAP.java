@@ -31,7 +31,6 @@ import java.util.Arrays;
 public class SAP {
     Digraph G;
     private int[] distTo;
-    private int[] edgeTo;
     
     /**
      * Constructor takes a digraph (not necessarily a DAG).
@@ -48,13 +47,9 @@ public class SAP {
         
         // Create a vertex-indexed array to keep track of distances and marking
         distTo = new int[this.G.V()];
-        
-        // Create a vertex-indexed array to help us erase our tracks after BFS
-        edgeTo = new int[this.G.V()];
-        
+                
         // Adopt the convention that -1 means that this vertex is unmarked
         Arrays.fill(distTo, -1);
-        Arrays.fill(edgeTo, -1);
     }
 
     /**
@@ -102,7 +97,6 @@ public class SAP {
                     vert.enqueue(adj);
                     dist.enqueue(d + 1);
                     distTo[adj] = d + 1;
-                    edgeTo[adj] = i;
                 }
                 
                 // We've collided, indicating the existence of a common ancestor
@@ -115,7 +109,6 @@ public class SAP {
                     while (!marked.isEmpty()) {
                         int m = marked.pop();
                         distTo[m] = -1;
-                        edgeTo[m] = -1;
                     }
                     
                     // return the answer
