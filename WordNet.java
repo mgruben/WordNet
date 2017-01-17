@@ -59,7 +59,10 @@ public class WordNet {
     }
 
     /**
-     * Distance between nounA and nounB (defined below)
+     * Distance between nounA and nounB.
+     * 
+     * Distance is defined as the minimum length of any ancestral path between
+     * any synset v of nounA and any synset w of nounB.
      * 
      * @param nounA 
      * @param nounB
@@ -76,7 +79,11 @@ public class WordNet {
 
     /**
      * A synset (second field of synsets.txt) that is the common ancestor of
-     * nounA and nounB in a shortest ancestral path (defined below).
+     * nounA and nounB in a shortest ancestral path.
+     * 
+     * A shortest ancestral path is an ancestral path of minimum total length,
+     * where length is a measure of the number of hops to get from a synset to
+     * a hypernym of that synset.
      * 
      * @param nounA
      * @param nounB
