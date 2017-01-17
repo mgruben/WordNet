@@ -37,7 +37,6 @@ public class SAP {
     
     private Stack<Integer> marked;  // Stores which vertices have been marked
     private Queue<Integer> vert;    // Stores the next vertices in BFS
-    private Queue<Integer> dist;    // Stores the next vertices' distance in BFS
     
     /**
      * Constructor takes a digraph (not necessarily a DAG).
@@ -54,7 +53,6 @@ public class SAP {
         anc = -1;
         marked = new Stack<>();
         vert = new Queue<>();
-        dist = new Queue<>();
         
         // Store the given digraph, so that we can ask it for adjacent vertices
         this.G = G;
@@ -106,7 +104,6 @@ public class SAP {
         for (int i: v) {
             vert.enqueue(i);
             marked.push(i);
-            dist.enqueue(0);
             distTo[i] = 0;
             fam[i] = (char) -1;
         }
@@ -115,7 +112,6 @@ public class SAP {
         for (int i: w) {
             vert.enqueue(i);
             marked.push(i);
-            dist.enqueue(0);
             distTo[i] = 0;
             fam[i] = (char) 1;
         }
@@ -123,12 +119,11 @@ public class SAP {
         // conduct parallel BFS for shortest ancestral path
         while (!vert.isEmpty()) {
             int i = vert.dequeue();
-            int d = dist.dequeue();
             for (int adj: G.adj(i)) {
                 if (distTo[adj] == -1 && fam[adj] == 0) {
                     vert.enqueue(adj);
-                    dist.enqueue(d + 1);
-                    distTo[adj] = d + 1;
+                    marked.push(adj);
+                    distTo[adj] = distTo[i] + 1;
                     fam[adj] = fam[i];
                 }
                 
@@ -139,7 +134,7 @@ public class SAP {
                  * individual methods can return from this state what they want.
                  */
                 else {
-                    sp = d + 1 + distTo[adj];
+                    sp = distTo[i] + 1 + distTo[adj];
                     anc = adj;
                     return;
                 }
@@ -171,7 +166,6 @@ public class SAP {
         
         // Clear the parallel queues of vertices and distances
         vert = new Queue<>();
-        dist = new Queue<>();
         
         // Set shortest path and ancestor to "none" code
         sp = -1;
