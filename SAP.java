@@ -71,8 +71,8 @@ public class SAP {
     /**
      * Length of shortest ancestral path between v and w; -1 if no such path.
      * 
-     * @param v
-     * @param w
+     * @param v The synset ID of the first synset in the sap
+     * @param w The synset ID of the other synset in the sap
      * @throws IndexOutOfBoundsException if <em>v</em> or <em>w</em> is outside
      *         of the range {@code [0, G.V() - 1)}
      * @return the length of the shortest ancestral path between <em>v</em> and
@@ -136,8 +136,8 @@ public class SAP {
      * A common ancestor of v and w that participates in a shortest ancestral
      * path; -1 if no such path.
      * 
-     * @param v
-     * @param w
+     * @param v The synset ID of the first synset in the sap
+     * @param w The synset ID of the other synset in the sap
      * @throws IndexOutOfBoundsException if <em>v</em> or <em>w</em> is outside
      *         of the range {@code [0, G.V() - 1)}
      * @return the synset ID of the common ancestor of <em>v</em> and <em>w</em>
@@ -152,8 +152,9 @@ public class SAP {
     /**
      * Length of shortest ancestral path between any vertex in v and any vertex
      * in w; -1 if no such path.
-     * @param v
-     * @param w
+     * 
+     * @param v The synset ID of the first synset in the sap
+     * @param w The synset ID of the other synset in the sap
      * @throws NullPointerException if {@code v == null}
      * @throws NullPointerException if {@code w == null}
      * @throws IndexOutOfBoundsException if any vertex in <em>v</em> or
@@ -173,8 +174,9 @@ public class SAP {
     /**
      * A common ancestor that participates in shortest ancestral path; -1 if no
      * such path.
-     * @param v
-     * @param w
+     * 
+     * @param v The synset ID of the first synset in the sap
+     * @param w The synset ID of the other synset in the sap
      * @throws NullPointerException if {@code v == null}
      * @throws NullPointerException if {@code w == null}
      * @throws IndexOutOfBoundsException if any vertex in <em>v</em> or
