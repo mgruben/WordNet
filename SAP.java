@@ -106,10 +106,7 @@ public class SAP {
                     ans = d + 1 + distTo[adj];
                     
                     // unmark all marked vertices to efficiently re-initialize
-                    while (!marked.isEmpty()) {
-                        int m = marked.pop();
-                        distTo[m] = -1;
-                    }
+                    while (!marked.isEmpty()) distTo[marked.pop()] = -1;
                     
                     // return the answer
                     return ans;
