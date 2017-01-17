@@ -185,7 +185,13 @@ public class SAP {
         if (v < 0 || v >= G.V() || w < 0 || w >= G.V())
             throw new java.lang.IndexOutOfBoundsException();
         
-        this.parallelBFS(v, w);
+        Queue<Integer> V = new Queue<>();
+        V.enqueue(v);
+        
+        Queue<Integer> W = new Queue<>();
+        W.enqueue(w);
+        
+        this.parallelBFS(V, W);
         int ans = sp;
         this.cleanBFS();
         return ans;
@@ -207,7 +213,13 @@ public class SAP {
         if (v < 0 || v >= G.V() || w < 0 || w >= G.V())
             throw new java.lang.IndexOutOfBoundsException();
         
-        this.parallelBFS(v, w);
+        Queue<Integer> V = new Queue<>();
+        V.enqueue(v);
+        
+        Queue<Integer> W = new Queue<>();
+        W.enqueue(w);
+        
+        this.parallelBFS(V, W);
         int ans = anc;
         this.cleanBFS();
         return ans;
