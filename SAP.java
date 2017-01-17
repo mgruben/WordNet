@@ -31,6 +31,7 @@ import java.util.Arrays;
 public class SAP {
     Digraph G;              // The given digraph
     private int[] distTo;   // The distTo array for storing shortest paths
+    private char[] fam;     // The "family" to which the vertex belongs
     private int sp;         // The shortest path result of the BFS; -1 if none
     private int anc;        // The common ancestor result of the BFS; -1 if none
     
@@ -60,6 +61,16 @@ public class SAP {
         
         // Create a vertex-indexed array to keep track of distances and marking
         distTo = new int[this.G.V()];
+        
+        /** 
+         * Create a vertex-indexed array to keep track of which "family" the
+         * given vertex belongs to.
+         * 
+         * Adopt the convention that 0 means no family (or, unmarked),
+         *                          -1 means the V family, and
+         *                           1 means the W family.
+         */
+        fam = new char[this.G.V()];
                 
         // Adopt the convention that -1 means that this vertex is unmarked
         Arrays.fill(distTo, -1);
@@ -73,32 +84,52 @@ public class SAP {
      * This method leaves the BFS state fields in a dirty state; each method
      * that calls this method is responsible for cleaning the BFS itself.
      * 
-     * @param v The synset ID of the first synset in the parallel BFS
-     * @param w The synset ID of the other synset in the parallel BFS
+     * @param v The synset IDs of the first synset family in the parallel BFS
+     * @param w The synset IDs of the other synset family in the parallel BFS
      */
-    private void parallelBFS(int v, int w) {
+    private void parallelBFS(Iterable<Integer> v, Iterable<Integer> w) {
         
-        // enqueue our first synset to search and mark it as seen
-        vert.enqueue(v);
-        marked.push(v);
-        dist.enqueue(0);
-        distTo[v] = 0;
+        /**
+         * Note that, although we're enqueueing all synsets from V family first,
+         * followed by all synsets from W family, we're still running a parallel
+         * breadth-first search.
+         * 
+         * That is, we're still considering all vertices of distance k before
+         * we consider any vertices of distance (k + 1).
+         * 
+         * So, although we could append a synset from V family, then a synset
+         * from W family, we don't obtain a more correct algorithm through that
+         * interleaving.
+         */
         
-        // enqueue our other synset to search and mark it as seen
-        vert.enqueue(w);
-        marked.push(w);
-        dist.enqueue(0);
-        distTo[w] = 0;
+        // enqueue synsets from our first family to search; mark them as seen
+        for (int i: v) {
+            vert.enqueue(i);
+            marked.push(i);
+            dist.enqueue(0);
+            distTo[i] = 0;
+            fam[i] = (char) -1;
+        }
+        
+        // enqueue synsets from our other family to search; mark them as seen
+        for (int i: w) {
+            vert.enqueue(i);
+            marked.push(i);
+            dist.enqueue(0);
+            distTo[i] = 0;
+            fam[i] = (char) 1;
+        }
         
         // conduct parallel BFS for shortest ancestral path
         while (!vert.isEmpty()) {
             int i = vert.dequeue();
             int d = dist.dequeue();
             for (int adj: G.adj(i)) {
-                if (distTo[adj] == -1) {
+                if (distTo[adj] == -1 && fam[adj] == 0) {
                     vert.enqueue(adj);
                     dist.enqueue(d + 1);
                     distTo[adj] = d + 1;
+                    fam[adj] = fam[i];
                 }
                 
                 /**
@@ -129,9 +160,14 @@ public class SAP {
         /** 
          * Unmark all marked vertices to efficiently re-initialize.
          * 
-         * This sets all entries in distTo to -1.
+         * This sets all entries in distTo to -1, and
+         * sets all entries is fam to 0.
          */
-        while (!marked.isEmpty()) distTo[marked.pop()] = -1;
+        while (!marked.isEmpty()){
+            int m = marked.pop();
+            distTo[m] = -1;
+            fam[m] = 0;
+        }
         
         // Clear the parallel queues of vertices and distances
         vert = new Queue<>();
