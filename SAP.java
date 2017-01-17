@@ -140,6 +140,8 @@ public class SAP {
                 }
             }
         }
+        
+        // if we're here, our breadth-first search did not find an ancestor
     }
     
     /**
