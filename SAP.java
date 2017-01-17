@@ -246,6 +246,10 @@ public class SAP {
         for (int w: W) if (w < 0 || w >= G.V())
             throw new java.lang.IndexOutOfBoundsException();
         
+        this.parallelBFS(V, W);
+        int ans = sp;
+        this.cleanBFS();
+        return ans;
     }
 
     /**
@@ -268,7 +272,11 @@ public class SAP {
             throw new java.lang.IndexOutOfBoundsException();
         for (int w: W) if (w < 0 || w >= G.V())
             throw new java.lang.IndexOutOfBoundsException();
-
+        
+        this.parallelBFS(V, W);
+        int ans = anc;
+        this.cleanBFS();
+        return ans;
     }
 
     // do unit testing of this class
