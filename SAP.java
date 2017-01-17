@@ -31,12 +31,12 @@ import java.util.Arrays;
 public class SAP {
     Digraph G;              // The given digraph
     private int[] distTo;   // The distTo array for storing shortest paths
+    private char[] fam;     // The "family" to which the vertex belongs
     private int sp;         // The shortest path result of the BFS; -1 if none
     private int anc;        // The common ancestor result of the BFS; -1 if none
     
     private Stack<Integer> marked;  // Stores which vertices have been marked
     private Queue<Integer> vert;    // Stores the next vertices in BFS
-    private Queue<Integer> dist;    // Stores the next vertices' distance in BFS
     
     /**
      * Constructor takes a digraph (not necessarily a DAG).
@@ -53,13 +53,22 @@ public class SAP {
         anc = -1;
         marked = new Stack<>();
         vert = new Queue<>();
-        dist = new Queue<>();
         
         // Store the given digraph, so that we can ask it for adjacent vertices
         this.G = G;
         
         // Create a vertex-indexed array to keep track of distances and marking
         distTo = new int[this.G.V()];
+        
+        /** 
+         * Create a vertex-indexed array to keep track of which "family" the
+         * given vertex belongs to.
+         * 
+         * Adopt the convention that 0 means no family (or, unmarked),
+         *                          -1 means the V family, and
+         *                           1 means the W family.
+         */
+        fam = new char[this.G.V()];
                 
         // Adopt the convention that -1 means that this vertex is unmarked
         Arrays.fill(distTo, -1);
@@ -73,32 +82,49 @@ public class SAP {
      * This method leaves the BFS state fields in a dirty state; each method
      * that calls this method is responsible for cleaning the BFS itself.
      * 
-     * @param v The synset ID of the first synset in the parallel BFS
-     * @param w The synset ID of the other synset in the parallel BFS
+     * @param V The synset IDs of the first synset family in the parallel BFS
+     * @param W The synset IDs of the other synset family in the parallel BFS
      */
-    private void parallelBFS(int v, int w) {
+    private void parallelBFS(Iterable<Integer> V, Iterable<Integer> W) {
         
-        // enqueue our first synset to search and mark it as seen
-        vert.enqueue(v);
-        marked.push(v);
-        dist.enqueue(0);
-        distTo[v] = 0;
+        /**
+         * Note that, although we're enqueueing all synsets from V family first,
+         * followed by all synsets from W family, we're still running a parallel
+         * breadth-first search.
+         * 
+         * That is, we're still considering all vertices of distance k before
+         * we consider any vertices of distance (k + 1).
+         * 
+         * So, although we could append a synset from V family, then a synset
+         * from W family, we don't obtain a more correct algorithm through that
+         * interleaving.
+         */
         
-        // enqueue our other synset to search and mark it as seen
-        vert.enqueue(w);
-        marked.push(w);
-        dist.enqueue(0);
-        distTo[w] = 0;
+        // enqueue synsets from our first family to search; mark them as seen
+        for (int v: V) {
+            vert.enqueue(v);
+            marked.push(v);
+            distTo[v] = 0;
+            fam[v] = (char) -1;
+        }
+        
+        // enqueue synsets from our other family to search; mark them as seen
+        for (int w: W) {
+            vert.enqueue(w);
+            marked.push(w);
+            distTo[w] = 0;
+            fam[w] = (char) 1;
+        }
         
         // conduct parallel BFS for shortest ancestral path
         while (!vert.isEmpty()) {
             int i = vert.dequeue();
-            int d = dist.dequeue();
             for (int adj: G.adj(i)) {
-                if (distTo[adj] == -1) {
+                if (distTo[adj] == -1 && fam[adj] == 0) {
                     vert.enqueue(adj);
-                    dist.enqueue(d + 1);
-                    distTo[adj] = d + 1;
+                    marked.push(adj);
+                    distTo[adj] = distTo[i] + 1;
+                    fam[adj] = fam[i];
                 }
                 
                 /**
@@ -108,7 +134,7 @@ public class SAP {
                  * individual methods can return from this state what they want.
                  */
                 else {
-                    sp = d + 1 + distTo[adj];
+                    sp = distTo[i] + 1 + distTo[adj];
                     anc = adj;
                     return;
                 }
@@ -129,13 +155,17 @@ public class SAP {
         /** 
          * Unmark all marked vertices to efficiently re-initialize.
          * 
-         * This sets all entries in distTo to -1.
+         * This sets all entries in distTo to -1, and
+         * sets all entries is fam to 0.
          */
-        while (!marked.isEmpty()) distTo[marked.pop()] = -1;
+        while (!marked.isEmpty()){
+            int m = marked.pop();
+            distTo[m] = -1;
+            fam[m] = 0;
+        }
         
         // Clear the parallel queues of vertices and distances
         vert = new Queue<>();
-        dist = new Queue<>();
         
         // Set shortest path and ancestor to "none" code
         sp = -1;
@@ -155,7 +185,13 @@ public class SAP {
         if (v < 0 || v >= G.V() || w < 0 || w >= G.V())
             throw new java.lang.IndexOutOfBoundsException();
         
-        this.parallelBFS(v, w);
+        Queue<Integer> V = new Queue<>();
+        V.enqueue(v);
+        
+        Queue<Integer> W = new Queue<>();
+        W.enqueue(w);
+        
+        this.parallelBFS(V, W);
         int ans = sp;
         this.cleanBFS();
         return ans;
@@ -177,7 +213,13 @@ public class SAP {
         if (v < 0 || v >= G.V() || w < 0 || w >= G.V())
             throw new java.lang.IndexOutOfBoundsException();
         
-        this.parallelBFS(v, w);
+        Queue<Integer> V = new Queue<>();
+        V.enqueue(v);
+        
+        Queue<Integer> W = new Queue<>();
+        W.enqueue(w);
+        
+        this.parallelBFS(V, W);
         int ans = anc;
         this.cleanBFS();
         return ans;
@@ -187,8 +229,8 @@ public class SAP {
      * Length of shortest ancestral path between any vertex in v and any vertex
      * in w; -1 if no such path.
      * 
-     * @param v The synset ID of the first synset in the sap
-     * @param w The synset ID of the other synset in the sap
+     * @param V The synset ID of the first synset in the sap
+     * @param W The synset ID of the other synset in the sap
      * @throws NullPointerException if {@code v == null}
      * @throws NullPointerException if {@code w == null}
      * @throws IndexOutOfBoundsException if any vertex in <em>v</em> or
@@ -197,20 +239,21 @@ public class SAP {
      *         <em>v</em> and any vertex in <em>w</em>; {@code -1} if no
      *         such path
      */
-    public int length(Iterable<Integer> v, Iterable<Integer> w) {
-        if (v == null | w == null) throw new java.lang.NullPointerException();
-        for (int i: v) if (i < 0 || i >= G.V())
+    public int length(Iterable<Integer> V, Iterable<Integer> W) {
+        if (V == null | W == null) throw new java.lang.NullPointerException();
+        for (int v: V) if (v < 0 || v >= G.V())
             throw new java.lang.IndexOutOfBoundsException();
-        for (int i: w) if (i < 0 || i >= G.V())
+        for (int w: W) if (w < 0 || w >= G.V())
             throw new java.lang.IndexOutOfBoundsException();
+        
     }
 
     /**
      * A common ancestor that participates in shortest ancestral path; -1 if no
      * such path.
      * 
-     * @param v The synset ID of the first synset in the sap
-     * @param w The synset ID of the other synset in the sap
+     * @param V The synset ID of the first synset in the sap
+     * @param W The synset ID of the other synset in the sap
      * @throws NullPointerException if {@code v == null}
      * @throws NullPointerException if {@code w == null}
      * @throws IndexOutOfBoundsException if any vertex in <em>v</em> or
@@ -219,12 +262,13 @@ public class SAP {
      *         shortest ancestral path between any vertex in <em>v</em> and
      *         any vertex in <em>w</em>; {@code -1} if no such path
      */
-    public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
-        if (v == null | w == null) throw new java.lang.NullPointerException();
-        for (int i: v) if (i < 0 || i >= G.V())
+    public int ancestor(Iterable<Integer> V, Iterable<Integer> W) {
+        if (V == null | W == null) throw new java.lang.NullPointerException();
+        for (int v: V) if (v < 0 || v >= G.V())
             throw new java.lang.IndexOutOfBoundsException();
-        for (int i: w) if (i < 0 || i >= G.V())
+        for (int w: W) if (w < 0 || w >= G.V())
             throw new java.lang.IndexOutOfBoundsException();
+
     }
 
     // do unit testing of this class
