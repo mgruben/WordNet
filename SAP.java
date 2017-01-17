@@ -29,8 +29,10 @@ import java.util.Arrays;
  * @author Michael <GrubenM@GMail.com>
  */
 public class SAP {
-    Digraph G;
-    private int[] distTo;
+    Digraph G;              // The given digraph
+    private int[] distTo;   // The distTo array for storing shortest paths
+    private int sp;         // The shortest path result of the BFS; -1 if none
+    private int anc;        // The common ancestor result of the BFS; -1 if none
     
     /**
      * Constructor takes a digraph (not necessarily a DAG).
@@ -51,7 +53,21 @@ public class SAP {
         // Adopt the convention that -1 means that this vertex is unmarked
         Arrays.fill(distTo, -1);
     }
-
+    
+    /**
+     * Conduct a parallel breadth-first search on the given digraph, so that
+     * other methods (such as length() and ancestor()) can query for the fields
+     * that they need.
+     * 
+     * This method leaves the BFS state fields in a dirty state; each method
+     * that calls this method is responsible for cleaning the BFS itself.
+     * 
+     * @param v The synset ID of the first synset in the parallel BFS
+     * @param w The synset ID of the other synset in the parallel BFS
+     */
+    private void parallelBFS(int v, int w) {
+        
+    }
     /**
      * Length of shortest ancestral path between v and w; -1 if no such path.
      * 
