@@ -126,7 +126,11 @@ public class SAP {
      * just-conducted BFS have been saved to a temporary variable for return.
      */
     private void cleanBFS() {
-        // Unmark all marked vertices to efficiently re-initialize
+        /** 
+         * Unmark all marked vertices to efficiently re-initialize.
+         * 
+         * This sets all entries in distTo to -1.
+         */
         while (!marked.isEmpty()) distTo[marked.pop()] = -1;
         
         // Clear the parallel queues of vertices and distances
