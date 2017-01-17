@@ -22,11 +22,19 @@
 public class WordNet {
 
     /**
-     * Takes the name of the two input files.
+     * Takes the name of the two input files, and constructs a WordNet.
+     * 
+     * A WordNet is a rooted Directed Acyclic Graph, in which each vertex is an
+     * integer that represents a synset, and each edge denotes a hypernym
+     * relationship.
+     * 
+     * Specifically, v -> w means that:
+     * (1) v is a hyponym of w, and
+     * (2) w is a hypernym of v
      * 
      * 
-     * @param synsets
-     * @param hypernyms 
+     * @param synsets The name of the input file containing synsets
+     * @param hypernyms The name of the input file containing hypernyms
      * @throws NullPointerException if {@code synsets == null}
      * @throws NullPointerException if {@code hypernyms == null}
      * @throws IllegalArgumentException if the input does not correspond to a
