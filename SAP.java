@@ -34,6 +34,10 @@ public class SAP {
     private int sp;         // The shortest path result of the BFS; -1 if none
     private int anc;        // The common ancestor result of the BFS; -1 if none
     
+    private Stack<Integer> marked;  // Stores which vertices have been marked
+    private Queue<Integer> vert;    // Stores the next vertices in BFS
+    private Queue<Integer> dist;    // Stores the next vertices' distance in BFS
+    
     /**
      * Constructor takes a digraph (not necessarily a DAG).
      * 
@@ -43,6 +47,13 @@ public class SAP {
     public SAP(Digraph G) {
         // check for bad input
         if (G == null) throw new java.lang.NullPointerException();
+        
+        // Initialize our state variables
+        sp = -1;
+        anc = -1;
+        marked = new Stack<>();
+        vert = new Queue<>();
+        dist = new Queue<>();
         
         // Store the given digraph, so that we can ask it for adjacent vertices
         this.G = G;
@@ -67,31 +78,6 @@ public class SAP {
      */
     private void parallelBFS(int v, int w) {
         
-    }
-    /**
-     * Length of shortest ancestral path between v and w; -1 if no such path.
-     * 
-     * @param v The synset ID of the first synset in the sap
-     * @param w The synset ID of the other synset in the sap
-     * @throws IndexOutOfBoundsException if <em>v</em> or <em>w</em> is outside
-     *         of the range {@code [0, G.V() - 1)}
-     * @return the length of the shortest ancestral path between <em>v</em> and
-     *         <em>w</em>; {@code -1} if no such path exists
-     */
-    public int length(int v, int w) {
-        if (v < 0 || v >= G.V() || w < 0 || w >= G.V())
-            throw new java.lang.IndexOutOfBoundsException();
-        
-        // Our value to return, initialized to "no such path"
-        int ans = -1;
-        
-        // Initialize data structure to help unmark marked vertices
-        Stack<Integer> marked = new Stack<>();
-        
-        // Initialize parallel queues for vertices and their distances
-        Queue<Integer> vert = new Queue<>();
-        Queue<Integer> dist = new Queue<>();
-        
         // enqueue our first synset to search and mark it as seen
         vert.enqueue(v);
         marked.push(v);
@@ -115,20 +101,59 @@ public class SAP {
                     distTo[adj] = d + 1;
                 }
                 
-                // We've collided, indicating the existence of a common ancestor
+                /**
+                 * We've collided, indicating a successful breadth-first search.
+                 * 
+                 * Save the state of the BFS in our instance variables, so that
+                 * individual methods can return from this state what they want.
+                 */
                 else {
-                    
-                    // Store our answer to return
-                    ans = d + 1 + distTo[adj];
-                    
-                    // unmark all marked vertices to efficiently re-initialize
-                    while (!marked.isEmpty()) distTo[marked.pop()] = -1;
-                    
-                    // return the answer
-                    return ans;
+                    sp = d + 1 + distTo[adj];
+                    anc = adj;
+                    return;
                 }
             }
         }
+    }
+    
+    /**
+     * This method is used to unwind the results of a BFS.
+     * 
+     * This method should <b>always</b> be called before the method that called
+     * {@code parallelBFS} returns.
+     * 
+     * This method should be called after the desired state variables from the
+     * just-conducted BFS have been saved to a temporary variable for return.
+     */
+    private void cleanBFS() {
+        // Unmark all marked vertices to efficiently re-initialize
+        while (!marked.isEmpty()) distTo[marked.pop()] = -1;
+        
+        // Clear the parallel queues of vertices and distances
+        vert = new Queue<>();
+        dist = new Queue<>();
+        
+        // Set shortest path and ancestor to "none" code
+        sp = -1;
+        anc = -1;
+    }
+    /**
+     * Length of shortest ancestral path between v and w; -1 if no such path.
+     * 
+     * @param v The synset ID of the first synset in the sap
+     * @param w The synset ID of the other synset in the sap
+     * @throws IndexOutOfBoundsException if <em>v</em> or <em>w</em> is outside
+     *         of the range {@code [0, G.V() - 1)}
+     * @return the length of the shortest ancestral path between <em>v</em> and
+     *         <em>w</em>; {@code -1} if no such path exists
+     */
+    public int length(int v, int w) {
+        if (v < 0 || v >= G.V() || w < 0 || w >= G.V())
+            throw new java.lang.IndexOutOfBoundsException();
+        
+        this.parallelBFS(v, w);
+        int ans = sp;
+        this.cleanBFS();
         return ans;
     }
 
