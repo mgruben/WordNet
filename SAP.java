@@ -176,6 +176,11 @@ public class SAP {
     public int ancestor(int v, int w) {
         if (v < 0 || v >= G.V() || w < 0 || w >= G.V())
             throw new java.lang.IndexOutOfBoundsException();
+        
+        this.parallelBFS(v, w);
+        int ans = anc;
+        this.cleanBFS();
+        return ans;
     }
 
     /**
