@@ -1,8 +1,10 @@
 
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
+import java.util.Arrays;
 
 /*
  * Copyright (C) 2017 Michael <GrubenM@GMail.com>
@@ -27,6 +29,7 @@ import edu.princeton.cs.algs4.StdOut;
  */
 public class SAP {
     Digraph G;
+    private int[] distTo;
     /**
      * Constructor takes a digraph (not necessarily a DAG).
      * 
@@ -34,8 +37,17 @@ public class SAP {
      * @throws NullPointerException if {@code G == null}
      */
     public SAP(Digraph G) {
+        // check for bad input
         if (G == null) throw new java.lang.NullPointerException();
+        
+        // Store the given digraph, so that we can ask it for adjacent vertices
         this.G = G;
+        
+        // Create a vertex-indexed array to keep track of distances and marking
+        distTo = new int[this.G.V()];
+        
+        // Adopt the convention that -1 means that this vertex is unmarked
+        Arrays.fill(distTo, -1);
     }
 
     /**
@@ -51,6 +63,33 @@ public class SAP {
     public int length(int v, int w) {
         if (v < 0 || v >= G.V() || w < 0 || w >= G.V())
             throw new java.lang.IndexOutOfBoundsException();
+        
+        // Initialize parallel queues for vertices and their distances
+        Queue<Integer> vert = new Queue<>();
+        Queue<Integer> dist = new Queue<>();
+        
+        // enqueue our first synset to search and mark it as seen
+        vert.enqueue(v);
+        dist.enqueue(0);
+        distTo[v] = 0;
+        
+        // enqueue our other synset to search and mark it as seen
+        vert.enqueue(w);
+        dist.enqueue(0);
+        distTo[w] = 0;
+        
+        while (!vert.isEmpty()) {
+            int i = vert.dequeue();
+            int d = dist.dequeue();
+            for (int adj: G.adj(i)) {
+                if (distTo[adj] == -1) {
+                    vert.enqueue(adj);
+                    dist.enqueue(d + 1);
+                    distTo[adj] = d + 1;
+                }
+            }
+        }
+        
     }
 
     /**
