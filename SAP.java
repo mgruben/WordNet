@@ -231,14 +231,14 @@ public class SAP {
      * Length of shortest ancestral path between any vertex in v and any vertex
      * in w; -1 if no such path.
      * 
-     * @param V The synset ID of the first synset in the sap
-     * @param W The synset ID of the other synset in the sap
+     * @param V The iterable of the first synset family in the sap
+     * @param W The iterable of the other synset family in the sap
      * @throws NullPointerException if {@code v == null}
      * @throws NullPointerException if {@code w == null}
-     * @throws IndexOutOfBoundsException if any vertex in <em>v</em> or
-     *         <em>w</em> is outside of the range {@code [0, G.V() - 1)}
+     * @throws IndexOutOfBoundsException if any vertex in <em>V</em> or
+     *         <em>W</em> is outside of the range {@code [0, G.V() - 1)}
      * @return the length of the shortest ancestral path between any vertex in
-     *         <em>v</em> and any vertex in <em>w</em>; {@code -1} if no
+     *         <em>V</em> and any vertex in <em>W</em>; {@code -1} if no
      *         such path
      */
     public int length(Iterable<Integer> V, Iterable<Integer> W) {
@@ -258,15 +258,15 @@ public class SAP {
      * A common ancestor that participates in shortest ancestral path; -1 if no
      * such path.
      * 
-     * @param V The synset ID of the first synset in the sap
-     * @param W The synset ID of the other synset in the sap
+     * @param V The iterable of the first synset family in the sap
+     * @param W The iterable of the other synset family in the sap
      * @throws NullPointerException if {@code v == null}
      * @throws NullPointerException if {@code w == null}
-     * @throws IndexOutOfBoundsException if any vertex in <em>v</em> or
-     *         <em>w</em> is outside of the range {@code [0, G.V() - 1)}
+     * @throws IndexOutOfBoundsException if any vertex in <em>V</em> or
+     *         <em>W</em> is outside of the range {@code [0, G.V() - 1)}
      * @return the synset ID of a common ancestor that participates in a 
-     *         shortest ancestral path between any vertex in <em>v</em> and
-     *         any vertex in <em>w</em>; {@code -1} if no such path
+     *         shortest ancestral path between any vertex in <em>V</em> and
+     *         any vertex in <em>W</em>; {@code -1} if no such path
      */
     public int ancestor(Iterable<Integer> V, Iterable<Integer> W) {
         if (V == null | W == null) throw new java.lang.NullPointerException();
