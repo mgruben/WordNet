@@ -35,6 +35,7 @@ public class SAP {
     private char[] fam;     // The "family" to which the vertex belongs
     private int sp;         // The shortest path result of the BFS; -1 if none
     private int anc;        // The common ancestor result of the BFS; -1 if none
+    private int oth;        // The last synset leading to anc from the other tree
     
     private Stack<Integer> marked;  // Stores which vertices have been marked
     private Queue<Integer> vert;    // Stores the next vertices in BFS
@@ -52,6 +53,7 @@ public class SAP {
         // Initialize our state variables
         sp = -1;
         anc = -1;
+        oth = -1;
         marked = new Stack<>();
         vert = new Queue<>();
         
@@ -119,6 +121,7 @@ public class SAP {
             if (distTo[w] == 0) {
                 sp = 0;
                 anc = w;
+                oth = w;
                 return;
             }
             else {
@@ -150,6 +153,7 @@ public class SAP {
                 else {
                     sp = distTo[i] + 1 + distTo[adj];
                     anc = adj;
+                    oth = i;
                     return;
                 }
             }
@@ -186,6 +190,7 @@ public class SAP {
         // Set shortest path and ancestor to "none" code
         sp = -1;
         anc = -1;
+        oth = -1;
     }
     /**
      * Length of shortest ancestral path between v and w; -1 if no such path.
@@ -295,7 +300,7 @@ public class SAP {
         return ans;
     }
     
-    private Stack<Integer> pathTo(int v, int w) {
+    private Stack<Integer>[] pathTo(int v, int w) {
         if (v < 0 || v >= G.V() || w < 0 || w >= G.V())
             throw new java.lang.IndexOutOfBoundsException();
         
@@ -306,30 +311,42 @@ public class SAP {
         W.enqueue(w);
         
         this.parallelBFS(V, W);
-        Stack<Integer> ans = new Stack<>();
+        Stack[] ans = new Stack[2];
         if (anc == -1) {
             this.cleanBFS();
             return ans;
         }
+        ans[0] = new Stack<>();
         int tmp = anc;
-        ans.push(tmp);
+        ans[0].push(tmp);
         while (edgeTo[tmp] != -1) {
-            ans.push(edgeTo[tmp]);
+            ans[0].push(edgeTo[tmp]);
             tmp = edgeTo[tmp];
         }
+        
+        ans[1] = new Stack<>();
+        tmp = oth;
+        ans[1].push(anc);
+        ans[1].push(tmp);
+        while (edgeTo[tmp] != -1) {
+            ans[1].push(edgeTo[tmp]);
+            tmp = edgeTo[tmp];
+        }
+                
         this.cleanBFS();
         return ans;
     }
     
-    private String pathToString(Stack<Integer> s) {
+    private String pathToString(Stack<Integer>[] s) {
         StringBuilder sb = new StringBuilder();
-        while (!s.isEmpty()) {
-            sb.append(s.pop());
+        while (!s[0].isEmpty()) {
+            sb.append(s[0].pop());
             sb.append("->");
         }
-        if (sb.length() > 0) {
-            sb.deleteCharAt(sb.length()-1);
-            sb.deleteCharAt(sb.length()-1);
+        sb.append("\n");
+        while (!s[1].isEmpty()) {
+            sb.append(s[1].pop());
+            sb.append("->");
         }
         return sb.toString();
     }
