@@ -338,17 +338,27 @@ public class SAP {
     }
     
     private String pathToString(Stack<Integer>[] s) {
-        StringBuilder sb = new StringBuilder();
-        while (!s[0].isEmpty()) {
-            sb.append(s[0].pop());
-            sb.append("->");
+        if (s[0] == null || s[1] == null) return "";
+        
+        StringBuilder ans = new StringBuilder();
+        
+        for (Stack<Integer> st: s) {
+            StringBuilder sb = new StringBuilder();
+            while (!st.isEmpty()) {
+                sb.append(st.pop());
+                sb.append("->");
+            }
+            if (sb.length() > 0) {
+                sb.deleteCharAt(sb.length() - 1);
+                sb.deleteCharAt(sb.length() - 1);
+            }
+            sb.append('\n');
+            ans.append(sb);
         }
-        sb.append("\n");
-        while (!s[1].isEmpty()) {
-            sb.append(s[1].pop());
-            sb.append("->");
-        }
-        return sb.toString();
+        
+        ans.deleteCharAt(ans.length() - 1);
+        
+        return ans.toString();
     }
 
     // do unit testing of this class
