@@ -54,8 +54,8 @@ public class SAP {
         marked = new Stack<>();
         vert = new Queue<>();
         
-        // Store the given digraph, so that we can ask it for adjacent vertices
-        this.G = G;
+        // Copy the given digraph, so that we can ask it for adjacent vertices
+        this.G = new Digraph(G);
         
         // Create a vertex-indexed array to keep track of distances and marking
         distTo = new int[this.G.V()];
