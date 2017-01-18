@@ -28,10 +28,11 @@ import java.util.TreeSet;
  * @author Michael <GrubenM@GMail.com>
  */
 public class WordNet {
-    RedBlackBST<String, Bag<Integer>> nouns;
-    Set<String> allNouns;
-    Digraph G;
-    SAP sap;
+    private RedBlackBST<String, Bag<Integer>> nouns;
+    private Set<String> allNouns;
+    private Digraph G;
+    private SAP sap;
+    
     /**
      * Takes the name of the two input files, and constructs a WordNet.
      * 
