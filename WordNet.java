@@ -1,5 +1,6 @@
 
 import edu.princeton.cs.algs4.Bag;
+import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.RedBlackBST;
@@ -28,6 +29,8 @@ import edu.princeton.cs.algs4.RedBlackBST;
 public class WordNet {
     RedBlackBST<String, Integer> nouns;
     Bag<String> allNouns;
+    Digraph G;
+    SAP sap;
     /**
      * Takes the name of the two input files, and constructs a WordNet.
      * 
@@ -61,8 +64,12 @@ public class WordNet {
         In synIn = new In(synsets);
         In hypIn = new In(hypernyms);
         
+        // Keep count of how many vertices there are
+        int verts = 0;
+        
         // Parse the synsets file
         while (synIn.hasNextLine()) {
+            verts++;
             /** 
              * l[0] = id
              * l[1] = all the nouns separated by spaces
@@ -75,6 +82,21 @@ public class WordNet {
                 nouns.put(noun, id);
             }
         }
+        
+        // Initialize our vertex-indexed digraph
+        G = new Digraph(verts);
+        
+        // Parse the hypernyms file
+        while (hypIn.hasNextLine()) {
+            String[] e = hypIn.readLine().split(",");
+            int v = Integer.parseInt(e[0]);
+            for (int i = 1; i < e.length; i++) {
+                G.addEdge(v, Integer.parseInt(e[i]));
+            }
+        }
+        
+        // Initialize the SAP data structure
+        sap = new SAP(G);
     }
 
     /**
@@ -116,7 +138,7 @@ public class WordNet {
     public int distance(String nounA, String nounB) {
         if (nounA == null | nounB == null) 
             throw new java.lang.NullPointerException();
-        return -1;
+        return sap.length(nouns.get(nounA), nouns.get(nounB));
     }
 
     /**
@@ -139,13 +161,14 @@ public class WordNet {
     public String sap(String nounA, String nounB) {
         if (nounA == null | nounB == null) 
             throw new java.lang.NullPointerException();
-        return "";
+        return sap.ancestor(nouns.get(nounA), nouns.get(nounB));
     }
 
     // do unit testing of this class
     public static void main(String[] args) {
         WordNet wn = new WordNet("testing/synsets.txt", "testing/hypernyms.txt");
-        System.out.println(wn.isNoun(word));
+        System.out.println(wn.isNoun("nin-sin"));
+        System.out.println(wn.isNoun("World of Warcraft"));
     }
 }
 
