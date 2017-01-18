@@ -3,6 +3,7 @@ import edu.princeton.cs.algs4.Bag;
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.RedBlackBST;
+import edu.princeton.cs.algs4.ST;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -28,10 +29,21 @@ import java.util.TreeSet;
  * @author Michael <GrubenM@GMail.com>
  */
 public class WordNet {
+    
+    // A lookup for nouns, both to check existence and to get their synset ids
     private RedBlackBST<String, Bag<Integer>> nouns;
+    
+    // An iterable of all nouns seen; also helps to correctly handle RedBlackBST
     private Set<String> allNouns;
+    
+    // The digraph for use in SAP
     private Digraph G;
+    
+    // The SAP for running shortest-ancestral path queries
     private SAP sap;
+    
+    // The ancestor lookup table
+    private ST<Integer, String> synMap;
     
     /**
      * Takes the name of the two input files, and constructs a WordNet.
@@ -61,6 +73,7 @@ public class WordNet {
         // Initialize instance variables
         nouns = new RedBlackBST<>();
         allNouns = new TreeSet<>();
+        synMap = new ST<>();
         
         // Handle the given files
         In synIn = new In(synsets);
@@ -79,6 +92,7 @@ public class WordNet {
              */
             String[] l = synIn.readLine().split(",");
             int id = Integer.parseInt(l[0]);
+            synMap.put(id, l[1]);
             for (String noun: l[1].split(" ")) {
                 boolean seen = allNouns.add(noun);
                 if (seen) {
@@ -171,7 +185,7 @@ public class WordNet {
     public String sap(String nounA, String nounB) {
         if (nounA == null | nounB == null) 
             throw new java.lang.NullPointerException();
-        return sap.ancestor(nouns.get(nounA), nouns.get(nounB));
+        return synMap.get(sap.ancestor(nouns.get(nounA), nouns.get(nounB)));
     }
 
     // do unit testing of this class
