@@ -30,7 +30,8 @@ import java.util.Arrays;
  */
 public class SAP {
     Digraph G;              // The given digraph
-    private int[] distTo;   // The distTo array for storing shortest paths
+    private int[] distTo;   // For storing shortest paths
+    private int[] edgeTo;   // For recreating paths from v to w
     private char[] fam;     // The "family" to which the vertex belongs
     private int sp;         // The shortest path result of the BFS; -1 if none
     private int anc;        // The common ancestor result of the BFS; -1 if none
@@ -60,6 +61,9 @@ public class SAP {
         // Create a vertex-indexed array to keep track of distances and marking
         distTo = new int[this.G.V()];
         
+        // Create a vertex-indexed array to keep track of the path from v to w
+        edgeTo = new int[this.G.V()];
+        
         /** 
          * Create a vertex-indexed array to keep track of which "family" the
          * given vertex belongs to.
@@ -72,6 +76,7 @@ public class SAP {
                 
         // Adopt the convention that -1 means that this vertex is unmarked
         Arrays.fill(distTo, -1);
+        Arrays.fill(edgeTo, -1);
     }
     
     /**
@@ -131,6 +136,7 @@ public class SAP {
                 if (distTo[adj] == -1 && fam[adj] == 0) {
                     vert.enqueue(adj);
                     marked.push(adj);
+                    edgeTo[adj] = i;
                     distTo[adj] = distTo[i] + 1;
                     fam[adj] = fam[i];
                 }
@@ -286,6 +292,28 @@ public class SAP {
         this.parallelBFS(V, W);
         int ans = anc;
         this.cleanBFS();
+        return ans;
+    }
+    
+    private Iterable<Integer> pathTo(int v, int w) {
+        if (v < 0 || v >= G.V() || w < 0 || w >= G.V())
+            throw new java.lang.IndexOutOfBoundsException();
+        
+        Queue<Integer> V = new Queue<>();
+        V.enqueue(v);
+        
+        Queue<Integer> W = new Queue<>();
+        W.enqueue(w);
+        
+        this.parallelBFS(V, W);
+        Queue<Integer> ans = new Queue<>();
+        int tmp = anc;
+        ans.enqueue(tmp);
+        while (edgeTo[tmp] != -1) {
+            ans.enqueue(edgeTo[tmp]);
+            tmp = edgeTo[tmp];
+        }
+        
         return ans;
     }
 
