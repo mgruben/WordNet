@@ -110,10 +110,18 @@ public class SAP {
         
         // enqueue synsets from our other family to search; mark them as seen
         for (int w: W) {
-            vert.enqueue(w);
-            marked.push(w);
-            distTo[w] = 0;
-            fam[w] = (char) 1;
+            // Check for collision in the list, before searching
+            if (distTo[w] == 0) {
+                sp = 0;
+                anc = w;
+                return;
+            }
+            else {
+                vert.enqueue(w);
+                marked.push(w);
+                distTo[w] = 0;
+                fam[w] = (char) 1;
+            }
         }
         
         // conduct parallel BFS for shortest ancestral path
