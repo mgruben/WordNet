@@ -1,6 +1,7 @@
 
 import edu.princeton.cs.algs4.Bag;
 import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.DirectedCycle;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.RedBlackBST;
 import edu.princeton.cs.algs4.ST;
@@ -40,6 +41,9 @@ public class WordNet {
     
     // The digraph for use in SAP
     private Digraph G;
+    
+    // Client program to check for cycles
+    private DirectedCycle dc;
     
     // The SAP for running shortest-ancestral path queries
     private SAP sap;
@@ -119,7 +123,10 @@ public class WordNet {
                 G.addEdge(v, Integer.parseInt(e[i]));
             }
         }
-        // TODO check for rooted DAG and throw IllegalArgumentException
+        
+        // Check for a cycle (i.e., input is not a DAG)
+        dc = new DirectedCycle(G);
+        if (dc.hasCycle()) throw new IllegalArgumentException();
         
         // Initialize the SAP data structure
         sap = new SAP(G);
