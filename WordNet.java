@@ -1,3 +1,9 @@
+
+import edu.princeton.cs.algs4.Bag;
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.Queue;
+import edu.princeton.cs.algs4.RedBlackBST;
+
 /*
  * Copyright (C) 2017 Michael <GrubenM@GMail.com>
  *
@@ -20,7 +26,8 @@
  * @author Michael <GrubenM@GMail.com>
  */
 public class WordNet {
-
+    RedBlackBST<String, Integer> nouns;
+    Bag<String> allNouns;
     /**
      * Takes the name of the two input files, and constructs a WordNet.
      * 
@@ -41,8 +48,33 @@ public class WordNet {
      *         rooted DAG
      */
     public WordNet(String synsets, String hypernyms) {
+        
+        // Check for invalid input
         if (synsets == null | hypernyms == null)
             throw new java.lang.NullPointerException();
+        
+        // Initialize instance variables
+        nouns = new RedBlackBST<>();
+        allNouns = new Bag<>();
+        
+        // Handle the given files
+        In synIn = new In(synsets);
+        In hypIn = new In(hypernyms);
+        
+        // Parse the synsets file
+        while (synIn.hasNextLine()) {
+            /** 
+             * l[0] = id
+             * l[1] = all the nouns separated by spaces
+             * l[2] = gloss
+             */
+            String[] l = synIn.readLine().split(",");
+            int id = Integer.parseInt(l[0]);
+            for (String noun: l[1].split(" ")) {
+                allNouns.add(noun);
+                nouns.put(noun, id);
+            }
+        }
     }
 
     /**
@@ -51,7 +83,7 @@ public class WordNet {
      * @return all WordNet nouns
      */
     public Iterable<String> nouns() {
-
+        return allNouns;
     }
 
     /**
@@ -64,6 +96,7 @@ public class WordNet {
      */
     public boolean isNoun(String word) {
         if (word == null) throw new java.lang.NullPointerException();
+        return false;
     }
 
     /**
@@ -83,6 +116,7 @@ public class WordNet {
     public int distance(String nounA, String nounB) {
         if (nounA == null | nounB == null) 
             throw new java.lang.NullPointerException();
+        return -1;
     }
 
     /**
@@ -105,11 +139,13 @@ public class WordNet {
     public String sap(String nounA, String nounB) {
         if (nounA == null | nounB == null) 
             throw new java.lang.NullPointerException();
+        return "";
     }
 
     // do unit testing of this class
     public static void main(String[] args) {
-        
+        WordNet wn = new WordNet("testing/synsets.txt", "testing/hypernyms.txt");
+        System.out.println(wn.isNoun(word));
     }
 }
 
