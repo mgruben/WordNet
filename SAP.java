@@ -147,7 +147,7 @@ public class SAP {
                  * Save the state of the BFS in our instance variables, so that
                  * individual methods can return from this state what they want.
                  */
-                else {
+                else if (fam[adj] + fam[i] == 0) {
                     sp = distTo[i] + 1 + distTo[adj];
                     anc = adj;
                     return;
