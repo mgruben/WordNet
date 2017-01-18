@@ -84,13 +84,9 @@ public class WordNet {
         // Handle the given files
         In synIn = new In(synsets);
         In hypIn = new In(hypernyms);
-        
-        // Keep count of how many vertices there are
-        int verts = 0;
-        
+                
         // Parse the synsets file
         while (synIn.hasNextLine()) {
-            verts++;
             /** 
              * l[0] = id
              * l[1] = all the nouns separated by spaces
@@ -100,8 +96,8 @@ public class WordNet {
             int id = Integer.parseInt(l[0]);
             synMap.put(id, l[1]);
             for (String noun: l[1].split(" ")) {
-                boolean newAdd = allNouns.add(noun);
-                if (newAdd) {
+                boolean isNewAdd = allNouns.add(noun);
+                if (isNewAdd) {
                     Bag<Integer> b = new Bag<>();
                     b.add(id);
                     nouns.put(noun, b);
@@ -113,7 +109,7 @@ public class WordNet {
         }
         
         // Initialize our vertex-indexed digraph
-        G = new Digraph(verts);
+        G = new Digraph(allNouns.size());
         
         // Parse the hypernyms file
         while (hypIn.hasNextLine()) {
