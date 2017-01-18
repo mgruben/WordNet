@@ -96,7 +96,7 @@ public class WordNet {
      */
     public boolean isNoun(String word) {
         if (word == null) throw new java.lang.NullPointerException();
-        return false;
+        return nouns.contains(word);
     }
 
     /**
