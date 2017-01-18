@@ -175,12 +175,13 @@ public class SAP {
         /** 
          * Unmark all marked vertices to efficiently re-initialize.
          * 
-         * This sets all entries in distTo to -1, and
+         * This sets all entries in distTo and edgeTo to -1, and
          * sets all entries is fam to 0.
          */
         while (!marked.isEmpty()){
             int m = marked.pop();
             distTo[m] = -1;
+            edgeTo[m] = -1;
             fam[m] = 0;
         }
         
