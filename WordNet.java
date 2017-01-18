@@ -4,6 +4,8 @@ import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.RedBlackBST;
 import edu.princeton.cs.algs4.ST;
+import edu.princeton.cs.algs4.StdIn;
+import edu.princeton.cs.algs4.StdOut;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -190,9 +192,13 @@ public class WordNet {
 
     // do unit testing of this class
     public static void main(String[] args) {
-        WordNet wn = new WordNet("testing/synsets.txt", "testing/hypernyms.txt");
-        System.out.println(wn.isNoun("nin-sin"));
-        System.out.println(wn.isNoun("World of Warcraft"));
+        WordNet wn = new WordNet(args[0], args[1]);
+        while (!StdIn.isEmpty()) {
+            String nounA = StdIn.readString();
+            String nounB = StdIn.readString();
+            StdOut.println("sap: " + wn.sap(nounA, nounB));
+        }
+
     }
 }
 
