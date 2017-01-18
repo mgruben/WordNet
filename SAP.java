@@ -338,7 +338,7 @@ public class SAP {
         return ans;
     }
     
-    private String pathToString(Stack<Integer>[] s) {
+    private String pathsToString(Stack<Integer>[] s) {
         if (s[0] == null || s[1] == null) return "";
         
         StringBuilder ans = new StringBuilder();
@@ -373,7 +373,7 @@ public class SAP {
             int length   = sap.length(v, w);
             int ancestor = sap.ancestor(v, w);
             StdOut.printf("length = %d, ancestor = %d\n", length, ancestor);
-            StdOut.println(sap.pathToString(sap.pathTo(v, w)));
+            StdOut.println(sap.pathsToString(sap.pathTo(v, w)));
         }
     }
 }
