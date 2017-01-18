@@ -147,7 +147,7 @@ public class SAP {
                  * Save the state of the BFS in our instance variables, so that
                  * individual methods can return from this state what they want.
                  */
-                else if (fam[adj] + fam[i] == 0) {
+                else {
                     sp = distTo[i] + 1 + distTo[adj];
                     anc = adj;
                     return;
@@ -295,7 +295,7 @@ public class SAP {
         return ans;
     }
     
-    private Iterable<Integer> pathTo(int v, int w) {
+    private Stack<Integer> pathTo(int v, int w) {
         if (v < 0 || v >= G.V() || w < 0 || w >= G.V())
             throw new java.lang.IndexOutOfBoundsException();
         
@@ -306,15 +306,32 @@ public class SAP {
         W.enqueue(w);
         
         this.parallelBFS(V, W);
-        Queue<Integer> ans = new Queue<>();
+        Stack<Integer> ans = new Stack<>();
+        if (anc == -1) {
+            this.cleanBFS();
+            return ans;
+        }
         int tmp = anc;
-        ans.enqueue(tmp);
+        ans.push(tmp);
         while (edgeTo[tmp] != -1) {
-            ans.enqueue(edgeTo[tmp]);
+            ans.push(edgeTo[tmp]);
             tmp = edgeTo[tmp];
         }
-        
+        this.cleanBFS();
         return ans;
+    }
+    
+    private String pathToString(Stack<Integer> s) {
+        StringBuilder sb = new StringBuilder();
+        while (!s.isEmpty()) {
+            sb.append(s.pop());
+            sb.append("->");
+        }
+        if (sb.length() > 0) {
+            sb.deleteCharAt(sb.length()-1);
+            sb.deleteCharAt(sb.length()-1);
+        }
+        return sb.toString();
     }
 
     // do unit testing of this class
@@ -328,6 +345,7 @@ public class SAP {
             int length   = sap.length(v, w);
             int ancestor = sap.ancestor(v, w);
             StdOut.printf("length = %d, ancestor = %d\n", length, ancestor);
+            StdOut.println(sap.pathToString(sap.pathTo(v, w)));
         }
     }
 }
