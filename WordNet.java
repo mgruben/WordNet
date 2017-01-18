@@ -94,14 +94,14 @@ public class WordNet {
             int id = Integer.parseInt(l[0]);
             synMap.put(id, l[1]);
             for (String noun: l[1].split(" ")) {
-                boolean seen = allNouns.add(noun);
-                if (seen) {
-                    nouns.get(noun).add(id);
-                }
-                else {
+                boolean notAlreadyIn = allNouns.add(noun);
+                if (notAlreadyIn) {
                     Bag<Integer> b = new Bag<>();
                     b.add(id);
                     nouns.put(noun, b);
+                }
+                else {
+                    nouns.get(noun).add(id);
                 }
             }
         }
