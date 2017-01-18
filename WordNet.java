@@ -94,6 +94,7 @@ public class WordNet {
                 G.addEdge(v, Integer.parseInt(e[i]));
             }
         }
+        // TODO check for rooted DAG and throw IllegalArgumentException
         
         // Initialize the SAP data structure
         sap = new SAP(G);
