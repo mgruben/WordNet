@@ -84,7 +84,12 @@ public class WordNet {
         // Handle the given files
         In synIn = new In(synsets);
         In hypIn = new In(hypernyms);
-                
+        
+        // Record the number of synsets for use in declaring the digraph.
+        // id will increase monotonically until we run out of synsets, at which
+        // point it represents the number of synsets seen (minus 1).
+        int id = 0;
+        
         // Parse the synsets file
         while (synIn.hasNextLine()) {
             /** 
@@ -93,7 +98,7 @@ public class WordNet {
              * l[2] = gloss
              */
             String[] l = synIn.readLine().split(",");
-            int id = Integer.parseInt(l[0]);
+            id = Integer.parseInt(l[0]);
             synMap.put(id, l[1]);
             for (String noun: l[1].split(" ")) {
                 boolean isNewAdd = allNouns.add(noun);
@@ -109,7 +114,7 @@ public class WordNet {
         }
         
         // Initialize our vertex-indexed digraph
-        G = new Digraph(allNouns.size());
+        G = new Digraph(id+1);
         
         // Parse the hypernyms file
         while (hypIn.hasNextLine()) {
@@ -192,15 +197,31 @@ public class WordNet {
             throw new java.lang.NullPointerException();
         return synMap.get(sap.ancestor(nouns.get(nounA), nouns.get(nounB)));
     }
-
+    
+    private Iterable<Integer> getSynsetIDs(String noun) {
+        return nouns.get(noun);
+    }
+    
+    private String getSynsetNames(int s) {
+        return synMap.get(s);
+    }
+    
     // do unit testing of this class
     public static void main(String[] args) {
         WordNet wn = new WordNet(args[0], args[1]);
+        
         while (!StdIn.isEmpty()) {
-            String nounA = StdIn.readString();
-            String nounB = StdIn.readString();
-            StdOut.println("sap: " + wn.sap(nounA, nounB) + " (" + wn.distance(nounA, nounB) + ")");
+            Iterable<Integer> b = wn.getSynsetIDs(StdIn.readString());
+            for (int s: b) {
+                StdOut.println(s + ": " + wn.getSynsetNames(s));
+            }
         }
+        
+//        while (!StdIn.isEmpty()) {
+//            String nounA = StdIn.readString();
+//            String nounB = StdIn.readString();
+//            StdOut.println("sap: " + wn.sap(nounA, nounB) + " (" + wn.distance(nounA, nounB) + ")");
+//        }
 
     }
 }
