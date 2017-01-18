@@ -174,7 +174,7 @@ public class SAP {
             fam[m] = 0;
         }
         
-        // Clear the parallel queues of vertices and distances
+        // Clear the queue of vertices
         vert = new Queue<>();
         
         // Set shortest path and ancestor to "none" code
