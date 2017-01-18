@@ -2,8 +2,9 @@
 import edu.princeton.cs.algs4.Bag;
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.RedBlackBST;
+import java.util.Set;
+import java.util.TreeSet;
 
 /*
  * Copyright (C) 2017 Michael <GrubenM@GMail.com>
@@ -27,8 +28,8 @@ import edu.princeton.cs.algs4.RedBlackBST;
  * @author Michael <GrubenM@GMail.com>
  */
 public class WordNet {
-    RedBlackBST<String, Integer> nouns;
-    Bag<String> allNouns;
+    RedBlackBST<String, Bag<Integer>> nouns;
+    Set<String> allNouns;
     Digraph G;
     SAP sap;
     /**
@@ -58,7 +59,7 @@ public class WordNet {
         
         // Initialize instance variables
         nouns = new RedBlackBST<>();
-        allNouns = new Bag<>();
+        allNouns = new TreeSet<>();
         
         // Handle the given files
         In synIn = new In(synsets);
@@ -78,8 +79,15 @@ public class WordNet {
             String[] l = synIn.readLine().split(",");
             int id = Integer.parseInt(l[0]);
             for (String noun: l[1].split(" ")) {
-                allNouns.add(noun);
-                nouns.put(noun, id);
+                boolean seen = allNouns.add(noun);
+                if (seen) {
+                    nouns.get(noun).add(id);
+                }
+                else {
+                    Bag<Integer> b = new Bag<>();
+                    b.add(id);
+                    nouns.put(noun, b);
+                }
             }
         }
         
