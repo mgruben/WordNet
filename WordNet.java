@@ -100,8 +100,8 @@ public class WordNet {
             int id = Integer.parseInt(l[0]);
             synMap.put(id, l[1]);
             for (String noun: l[1].split(" ")) {
-                boolean notAlreadyIn = allNouns.add(noun);
-                if (notAlreadyIn) {
+                boolean newAdd = allNouns.add(noun);
+                if (newAdd) {
                     Bag<Integer> b = new Bag<>();
                     b.add(id);
                     nouns.put(noun, b);
@@ -203,7 +203,7 @@ public class WordNet {
         while (!StdIn.isEmpty()) {
             String nounA = StdIn.readString();
             String nounB = StdIn.readString();
-            StdOut.println("sap: " + wn.sap(nounA, nounB));
+            StdOut.println("sap: " + wn.sap(nounA, nounB) + " (" + wn.distance(nounA, nounB) + ")");
         }
 
     }
