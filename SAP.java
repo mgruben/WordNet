@@ -30,13 +30,16 @@ import java.util.Arrays;
  */
 public class SAP {
     private Digraph G;              // The given digraph
-    private int[] distTo;   // For storing shortest paths
-    private char[] fam;     // The "family" to which the vertex belongs
+    private int[] distToLeft;       // For storing shortest paths
+    private int[] distToRight;      // For storing shortest paths
     private int sp;         // The shortest path result of the BFS; -1 if none
     private int anc;        // The common ancestor result of the BFS; -1 if none
-    
+
     private Stack<Integer> marked;  // Stores which vertices have been marked
     private Queue<Integer> vert;    // Stores the next vertices in BFS
+    private Queue<Boolean> fam;     // The "family" to which the vertex belongs
+                                    // true is the V or left family, and
+                                    // false is the W or right family.
     
     /**
      * Constructor takes a digraph (not necessarily a DAG).
@@ -53,25 +56,18 @@ public class SAP {
         anc = -1;
         marked = new Stack<>();
         vert = new Queue<>();
+        fam = new Queue<>();
         
         // Copy the given digraph, so that we can ask it for adjacent vertices
         this.G = new Digraph(G);
         
         // Create a vertex-indexed array to keep track of distances and marking
-        distTo = new int[this.G.V()];
-                
-        /** 
-         * Create a vertex-indexed array to keep track of which "family" the
-         * given vertex belongs to.
-         * 
-         * Adopt the convention that 0 means no family (or, unmarked),
-         *                          -1 means the V family, and
-         *                           1 means the W family.
-         */
-        fam = new char[this.G.V()];
+        distToLeft = new int[this.G.V()];
+        distToRight = new int[this.G.V()];
                 
         // Adopt the convention that -1 means that this vertex is unmarked
-        Arrays.fill(distTo, -1);
+        Arrays.fill(distToLeft, -1);
+        Arrays.fill(distToRight, -1);
     }
     
     /**
@@ -104,14 +100,14 @@ public class SAP {
         for (int v: V) {
             vert.enqueue(v);
             marked.push(v);
-            distTo[v] = 0;
-            fam[v] = (char) -1;
+            distToLeft[v] = 0;
+            fam.enqueue(true);
         }
         
         // enqueue synsets from our other family to search; mark them as seen
         for (int w: W) {
             // Check for collision in the list, before searching
-            if (distTo[w] == 0 && fam[w] == (char) -1) {
+            if (distToLeft[w] == 0) {
                 sp = 0;
                 anc = w;
                 return;
@@ -119,43 +115,79 @@ public class SAP {
             else {
                 vert.enqueue(w);
                 marked.push(w);
-                distTo[w] = 0;
-                fam[w] = (char) 1;
+                distToRight[w] = 0;
+                fam.enqueue(false);
             }
         }
         
         // conduct parallel BFS for shortest ancestral path
         while (!vert.isEmpty()) {
             int i = vert.dequeue();
+            boolean fromLeft = fam.dequeue();
             for (int adj: G.adj(i)) {
-                if (distTo[adj] == -1 && fam[adj] == 0) {
+                if (fromLeft) {
+                    // We've already been here before from this family
+                    if (distToLeft[adj] != -1) continue;
+                    
+                    /**
+                     * We've collided, indicating a successful breadth-first search.
+                     * 
+                     * Note that, if the Digraph contains cycles, we won't know that
+                     * we've found the shortest ancestral path until the distance
+                     * exceeds the length of the shortest ancestral path found so
+                     * far.
+                     * 
+                     * Accordingly, check distance against that length, and return
+                     * when distance exceeds that best length.
+                     * 
+                     * Save the state of the BFS in our instance variables, so that
+                     * individual methods can return from this state what they want.
+                     */
+                    if (distToRight[adj] != -1 &&
+                        distToLeft[i] + 1 + distToRight[adj] < sp) {
+                            sp = distToLeft[i] + 1 + distToRight[adj];
+                            anc = adj;
+                    }
+                    
                     vert.enqueue(adj);
                     marked.push(adj);
-                    distTo[adj] = distTo[i] + 1;
-                    fam[adj] = fam[i];
-                }
-                
-                /**
-                 * We've collided, indicating a successful breadth-first search.
-                 * 
-                 * Note that, if the Digraph contains cycles, we won't know that
-                 * we've found the shortest ancestral path until the distance
-                 * exceeds the length of the shortest ancestral path found so
-                 * far.
-                 * 
-                 * Accordingly, check distance against that length, and return
-                 * when distance exceeds that best length.
-                 * 
-                 * Save the state of the BFS in our instance variables, so that
-                 * individual methods can return from this state what they want.
-                 */
-                else if (fam[adj] != fam[i]) {
-                    if (distTo[i] + 1 + distTo[adj] < sp) {
-                        sp = distTo[i] + 1 + distTo[adj];
-                        anc = adj;
-                    }
+                    fam.enqueue(fromLeft);
+                    distToLeft[adj] = distToLeft[i] + 1;
+                    
                     // Return early, if possible
-                    if (distTo[i] + 1 > sp) return;
+                    if (distToLeft[i] + 1 > sp) return;
+                }
+                    
+                else {
+                    // We've already been here before from this family
+                    if (distToRight[adj] != -1) continue;
+                    /**
+                     * We've collided, indicating a successful breadth-first search.
+                     * 
+                     * Note that, if the Digraph contains cycles, we won't know that
+                     * we've found the shortest ancestral path until the distance
+                     * exceeds the length of the shortest ancestral path found so
+                     * far.
+                     * 
+                     * Accordingly, check distance against that length, and return
+                     * when distance exceeds that best length.
+                     * 
+                     * Save the state of the BFS in our instance variables, so that
+                     * individual methods can return from this state what they want.
+                     */
+                    if (distToLeft[adj] != -1 &&
+                        distToRight[i] + 1 + distToLeft[adj] < sp) {
+                            sp = distToRight[i] + 1 + distToLeft[adj];
+                            anc = adj;
+                    }
+                    
+                    vert.enqueue(adj);
+                    marked.push(adj);
+                    fam.enqueue(fromLeft);
+                    distToRight[adj] = distToRight[i] + 1;
+                    
+                    // Return early, if possible
+                    if (distToRight[i] + 1 > sp) return;
                 }
             }
         }
@@ -181,12 +213,13 @@ public class SAP {
          */
         while (!marked.isEmpty()) {
             int m = marked.pop();
-            distTo[m] = -1;
-            fam[m] = 0;
+            distToLeft[m] = -1;
+            distToRight[m] = -1;
         }
         
         // Clear the queue of vertices
         vert = new Queue<>();
+        fam = new Queue<>();
         
         // Set shortest path and ancestor to "none" code
         sp = Integer.MAX_VALUE;
