@@ -136,10 +136,12 @@ public class WordNet {
                 for (int adj: G.adj(syn)) {
                     c++;
                 }
-                if (c == 0) root++;
+                if (c == 0) {
+                    root++;
+                    if (root > 1) throw new IllegalArgumentException();
+                }
             }
         }
-        if (root > 1) throw new IllegalArgumentException();
         
         // Initialize the SAP data structure
         sap = new SAP(G);
