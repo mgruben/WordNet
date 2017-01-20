@@ -172,6 +172,8 @@ public class WordNet {
     public int distance(String nounA, String nounB) {
         if (nounA == null || nounB == null) 
             throw new java.lang.NullPointerException();
+        if (!isNoun(nounA) || !isNoun(nounB))
+            throw new IllegalArgumentException();
         return sap.length(nouns.get(nounA), nouns.get(nounB));
     }
 
@@ -195,6 +197,8 @@ public class WordNet {
     public String sap(String nounA, String nounB) {
         if (nounA == null || nounB == null) 
             throw new java.lang.NullPointerException();
+        if (!isNoun(nounA) || !isNoun(nounB))
+            throw new IllegalArgumentException();
         return synMap.get(sap.ancestor(nouns.get(nounA), nouns.get(nounB)));
     }
             
