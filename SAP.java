@@ -304,7 +304,7 @@ public class SAP {
         this.parallelBFS(V, W);
         int ans = sp;
         this.cleanBFS();
-        if (sp == Integer.MAX_VALUE) return -1;
+        if (ans == Integer.MAX_VALUE) return -1;
         else return ans;
     }
 
