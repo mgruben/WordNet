@@ -250,7 +250,7 @@ public class SAP {
      *         such path
      */
     public int length(Iterable<Integer> V, Iterable<Integer> W) {
-        if (V == null | W == null) throw new java.lang.NullPointerException();
+        if (V == null || W == null) throw new java.lang.NullPointerException();
         for (int v: V) if (v < 0 || v >= G.V())
             throw new java.lang.IndexOutOfBoundsException();
         for (int w: W) if (w < 0 || w >= G.V())
@@ -277,7 +277,7 @@ public class SAP {
      *         any vertex in <em>W</em>; {@code -1} if no such path
      */
     public int ancestor(Iterable<Integer> V, Iterable<Integer> W) {
-        if (V == null | W == null) throw new java.lang.NullPointerException();
+        if (V == null || W == null) throw new java.lang.NullPointerException();
         for (int v: V) if (v < 0 || v >= G.V())
             throw new java.lang.IndexOutOfBoundsException();
         for (int w: W) if (w < 0 || w >= G.V())

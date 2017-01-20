@@ -73,7 +73,7 @@ public class WordNet {
     public WordNet(String synsets, String hypernyms) {
         
         // Check for invalid input
-        if (synsets == null | hypernyms == null)
+        if (synsets == null || hypernyms == null)
             throw new java.lang.NullPointerException();
         
         // Initialize instance variables
@@ -170,7 +170,7 @@ public class WordNet {
      * @return the distance between <em>nounA</em> and <em>nounB</em>
      */
     public int distance(String nounA, String nounB) {
-        if (nounA == null | nounB == null) 
+        if (nounA == null || nounB == null) 
             throw new java.lang.NullPointerException();
         return sap.length(nouns.get(nounA), nouns.get(nounB));
     }
@@ -193,7 +193,7 @@ public class WordNet {
      *         <em>nounB</em> in a shortest ancestral path
      */
     public String sap(String nounA, String nounB) {
-        if (nounA == null | nounB == null) 
+        if (nounA == null || nounB == null) 
             throw new java.lang.NullPointerException();
         return synMap.get(sap.ancestor(nouns.get(nounA), nouns.get(nounB)));
     }
