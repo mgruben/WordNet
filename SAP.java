@@ -31,7 +31,6 @@ import java.util.Arrays;
 public class SAP {
     private Digraph G;              // The given digraph
     private int[] distTo;   // For storing shortest paths
-    private int[] edgeTo;   // For recreating paths from v to w
     private char[] fam;     // The "family" to which the vertex belongs
     private int sp;         // The shortest path result of the BFS; -1 if none
     private int anc;        // The common ancestor result of the BFS; -1 if none
@@ -60,10 +59,7 @@ public class SAP {
         
         // Create a vertex-indexed array to keep track of distances and marking
         distTo = new int[this.G.V()];
-        
-        // Create a vertex-indexed array to keep track of the path from v to w
-        edgeTo = new int[this.G.V()];
-        
+                
         /** 
          * Create a vertex-indexed array to keep track of which "family" the
          * given vertex belongs to.
@@ -76,7 +72,6 @@ public class SAP {
                 
         // Adopt the convention that -1 means that this vertex is unmarked
         Arrays.fill(distTo, -1);
-        Arrays.fill(edgeTo, -1);
     }
     
     /**
@@ -136,7 +131,6 @@ public class SAP {
                 if (distTo[adj] == -1 && fam[adj] == 0) {
                     vert.enqueue(adj);
                     marked.push(adj);
-                    edgeTo[adj] = i;
                     distTo[adj] = distTo[i] + 1;
                     fam[adj] = fam[i];
                 }
@@ -177,7 +171,6 @@ public class SAP {
         while (!marked.isEmpty()) {
             int m = marked.pop();
             distTo[m] = -1;
-            edgeTo[m] = -1;
             fam[m] = 0;
         }
         
