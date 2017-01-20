@@ -5,6 +5,7 @@ import edu.princeton.cs.algs4.DirectedCycle;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.RedBlackBST;
 import edu.princeton.cs.algs4.ST;
+import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 import java.util.Set;
@@ -206,22 +207,50 @@ public class WordNet {
         return synMap.get(s);
     }
     
+    
+    private String pathsToString(String nounA, String nounB) {
+        Stack<Integer>[] sta = sap.pathTo(nouns.get(nounA), nouns.get(nounB));
+        
+        if (sta[0] == null || sta[1] == null) return "";
+        
+        StringBuilder ans = new StringBuilder();
+        
+        for (Stack<Integer> st: sta) {
+            StringBuilder sb = new StringBuilder();
+            while (!st.isEmpty()) {
+                sb.append(getSynsetNames(st.pop()));
+                sb.append("->");
+            }
+            if (sb.length() > 0) {
+                sb.deleteCharAt(sb.length() - 1);
+                sb.deleteCharAt(sb.length() - 1);
+            }
+            sb.append('\n');
+            ans.append(sb);
+        }
+        
+        ans.deleteCharAt(ans.length() - 1);
+        
+        return ans.toString();
+    }
+    
     // do unit testing of this class
     public static void main(String[] args) {
         WordNet wn = new WordNet(args[0], args[1]);
         
-        while (!StdIn.isEmpty()) {
-            Iterable<Integer> b = wn.getSynsetIDs(StdIn.readString());
-            for (int s: b) {
-                StdOut.println(s + ": " + wn.getSynsetNames(s));
-            }
-        }
-        
 //        while (!StdIn.isEmpty()) {
-//            String nounA = StdIn.readString();
-//            String nounB = StdIn.readString();
-//            StdOut.println("sap: " + wn.sap(nounA, nounB) + " (" + wn.distance(nounA, nounB) + ")");
+//            Iterable<Integer> b = wn.getSynsetIDs(StdIn.readString());
+//            for (int s: b) {
+//                StdOut.println(s + ": " + wn.getSynsetNames(s));
+//            }
 //        }
+        
+        while (!StdIn.isEmpty()) {
+            String nounA = StdIn.readString();
+            String nounB = StdIn.readString();
+            StdOut.println("sap: " + wn.sap(nounA, nounB) + " (" + wn.distance(nounA, nounB) + ")");
+            StdOut.println(wn.pathsToString(nounA, nounB));
+        }
 
     }
 }
