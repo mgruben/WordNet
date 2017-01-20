@@ -35,7 +35,6 @@ public class SAP {
     private char[] fam;     // The "family" to which the vertex belongs
     private int sp;         // The shortest path result of the BFS; -1 if none
     private int anc;        // The common ancestor result of the BFS; -1 if none
-    private int oth;        // The last synset leading to anc from the other tree
     
     private Stack<Integer> marked;  // Stores which vertices have been marked
     private Queue<Integer> vert;    // Stores the next vertices in BFS
@@ -53,7 +52,6 @@ public class SAP {
         // Initialize our state variables
         sp = -1;
         anc = -1;
-        oth = -1;
         marked = new Stack<>();
         vert = new Queue<>();
         
@@ -118,10 +116,9 @@ public class SAP {
         // enqueue synsets from our other family to search; mark them as seen
         for (int w: W) {
             // Check for collision in the list, before searching
-            if (distTo[w] == 0 && fam[w] == -1) {
+            if (distTo[w] == 0 && fam[w] == (char) -1) {
                 sp = 0;
                 anc = w;
-                oth = w;
                 return;
             }
             else {
@@ -153,7 +150,6 @@ public class SAP {
                 else if (fam[adj] != fam[i]) {
                     sp = distTo[i] + 1 + distTo[adj];
                     anc = adj;
-                    oth = i;
                     return;
                 }
             }
@@ -191,7 +187,6 @@ public class SAP {
         // Set shortest path and ancestor to "none" code
         sp = -1;
         anc = -1;
-        oth = -1;
     }
     /**
      * Length of shortest ancestral path between v and w; -1 if no such path.
