@@ -48,7 +48,7 @@ public class WordNet {
     // The SAP for running shortest-ancestral path queries
     private SAP sap;
     
-    // The ancestor lookup table
+    // The synset lookup table
     private ST<Integer, String> synMap;
     
     /**
@@ -61,7 +61,6 @@ public class WordNet {
      * Specifically, v -> w means that:
      * (1) v is a hyponym of w, and
      * (2) w is a hypernym of v
-     * 
      * 
      * @param synsets The name of the input file containing synsets
      * @param hypernyms The name of the input file containing hypernyms
@@ -129,7 +128,7 @@ public class WordNet {
         dc = new DirectedCycle(G);
         if (dc.hasCycle()) throw new IllegalArgumentException();
         
-        // Check for two roots
+        // Check for multiple roots
         int root = 0;
         for (String noun: allNouns) {
             for (int syn: nouns.get(noun)) {
