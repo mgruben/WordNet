@@ -49,7 +49,7 @@ public class SAP {
         if (G == null) throw new java.lang.NullPointerException();
         
         // Initialize our state variables
-        sp = -1;
+        sp = Integer.MAX_VALUE;
         anc = -1;
         marked = new Stack<>();
         vert = new Queue<>();
@@ -138,13 +138,24 @@ public class SAP {
                 /**
                  * We've collided, indicating a successful breadth-first search.
                  * 
+                 * Note that, if the Digraph contains cycles, we won't know that
+                 * we've found the shortest ancestral path until the distance
+                 * exceeds the length of the shortest ancestral path found so
+                 * far.
+                 * 
+                 * Accordingly, check distance against that length, and return
+                 * when distance exceeds that best length.
+                 * 
                  * Save the state of the BFS in our instance variables, so that
                  * individual methods can return from this state what they want.
                  */
                 else if (fam[adj] != fam[i]) {
-                    sp = distTo[i] + 1 + distTo[adj];
-                    anc = adj;
-                    return;
+                    if (distTo[i] + 1 + distTo[adj] < sp) {
+                        sp = distTo[i] + 1 + distTo[adj];
+                        anc = adj;
+                    }
+                    // Return early, if possible
+                    if (distTo[i] + 1 > sp) return;
                 }
             }
         }
@@ -178,7 +189,7 @@ public class SAP {
         vert = new Queue<>();
         
         // Set shortest path and ancestor to "none" code
-        sp = -1;
+        sp = Integer.MAX_VALUE;
         anc = -1;
     }
     /**
@@ -204,7 +215,8 @@ public class SAP {
         this.parallelBFS(V, W);
         int ans = sp;
         this.cleanBFS();
-        return ans;
+        if (ans == Integer.MAX_VALUE) return -1;
+        else return ans;
     }
 
     /**
@@ -259,7 +271,8 @@ public class SAP {
         this.parallelBFS(V, W);
         int ans = sp;
         this.cleanBFS();
-        return ans;
+        if (sp == Integer.MAX_VALUE) return -1;
+        else return ans;
     }
 
     /**
