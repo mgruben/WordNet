@@ -129,6 +129,19 @@ public class WordNet {
         dc = new DirectedCycle(G);
         if (dc.hasCycle()) throw new IllegalArgumentException();
         
+        // Check for two roots
+        int root = 0;
+        for (String noun: allNouns) {
+            for (int syn: nouns.get(noun)) {
+                int c = 0;
+                for (int adj: G.adj(syn)) {
+                    c++;
+                }
+                if (c == 0) root++;
+            }
+        }
+        if (root > 1) throw new IllegalArgumentException();
+        
         // Initialize the SAP data structure
         sap = new SAP(G);
     }
