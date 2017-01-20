@@ -29,7 +29,7 @@ import java.util.Arrays;
  * @author Michael <GrubenM@GMail.com>
  */
 public class SAP {
-    Digraph G;              // The given digraph
+    private Digraph G;              // The given digraph
     private int[] distTo;   // For storing shortest paths
     private int[] edgeTo;   // For recreating paths from v to w
     private char[] fam;     // The "family" to which the vertex belongs
@@ -178,7 +178,7 @@ public class SAP {
          * This sets all entries in distTo and edgeTo to -1, and
          * sets all entries is fam to 0.
          */
-        while (!marked.isEmpty()){
+        while (!marked.isEmpty()) {
             int m = marked.pop();
             distTo[m] = -1;
             edgeTo[m] = -1;

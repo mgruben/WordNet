@@ -5,7 +5,6 @@ import edu.princeton.cs.algs4.DirectedCycle;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.RedBlackBST;
 import edu.princeton.cs.algs4.ST;
-import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 import java.util.Set;
@@ -213,7 +212,8 @@ public class WordNet {
         while (!StdIn.isEmpty()) {
             String nounA = StdIn.readString();
             String nounB = StdIn.readString();
-            StdOut.println("sap: " + wn.sap(nounA, nounB) + " (" + wn.distance(nounA, nounB) + ")");
+            StdOut.println("sap: " + wn.sap(nounA, nounB) +
+                    " (" + wn.distance(nounA, nounB) + ")");
         }
 
     }

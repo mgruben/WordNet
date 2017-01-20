@@ -24,7 +24,7 @@ import edu.princeton.cs.algs4.StdOut;
  * @author Michael <GrubenM@GMail.com>
  */
 public class Outcast {
-    WordNet wordnet;
+    private WordNet wordnet;
     
     /**
      * Constructor takes a WordNet object.
@@ -51,7 +51,7 @@ public class Outcast {
        for (int i = 0; i < nouns.length; i++) {
            int d = 0;
            for (int j = 0; j < nouns.length; j++) {
-               d += wordnet.distance(nouns[i], nouns[j]);;
+               d += wordnet.distance(nouns[i], nouns[j]);
            }
            if (d > sum) {
                sum = d;
