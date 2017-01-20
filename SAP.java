@@ -118,7 +118,7 @@ public class SAP {
         // enqueue synsets from our other family to search; mark them as seen
         for (int w: W) {
             // Check for collision in the list, before searching
-            if (distTo[w] == 0) {
+            if (distTo[w] == 0 && fam[w] == -1) {
                 sp = 0;
                 anc = w;
                 oth = w;
@@ -150,7 +150,7 @@ public class SAP {
                  * Save the state of the BFS in our instance variables, so that
                  * individual methods can return from this state what they want.
                  */
-                else {
+                else if (fam[adj] != fam[i]) {
                     sp = distTo[i] + 1 + distTo[adj];
                     anc = adj;
                     oth = i;
@@ -301,15 +301,22 @@ public class SAP {
         return ans;
     }
     
-    private Stack<Integer>[] pathTo(int v, int w) {
-        if (v < 0 || v >= G.V() || w < 0 || w >= G.V())
-            throw new java.lang.IndexOutOfBoundsException();
-        
+    public Stack<Integer>[] pathTo(int v, int w) {
         Queue<Integer> V = new Queue<>();
-        V.enqueue(v);
-        
         Queue<Integer> W = new Queue<>();
+        
+        V.enqueue(v);
         W.enqueue(w);
+        
+        return pathTo(V, W);
+    }
+    
+    public Stack<Integer>[] pathTo(Iterable<Integer> V, Iterable<Integer> W) {
+        if (V == null | W == null) throw new java.lang.NullPointerException();
+        for (int v: V) if (v < 0 || v >= G.V())
+            throw new java.lang.IndexOutOfBoundsException();
+        for (int w: W) if (w < 0 || w >= G.V())
+            throw new java.lang.IndexOutOfBoundsException();
         
         this.parallelBFS(V, W);
         Stack[] ans = new Stack[2];
