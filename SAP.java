@@ -301,73 +301,6 @@ public class SAP {
         return ans;
     }
     
-    public Stack<Integer>[] pathTo(int v, int w) {
-        Queue<Integer> V = new Queue<>();
-        Queue<Integer> W = new Queue<>();
-        
-        V.enqueue(v);
-        W.enqueue(w);
-        
-        return pathTo(V, W);
-    }
-    
-    public Stack<Integer>[] pathTo(Iterable<Integer> V, Iterable<Integer> W) {
-        if (V == null | W == null) throw new java.lang.NullPointerException();
-        for (int v: V) if (v < 0 || v >= G.V())
-            throw new java.lang.IndexOutOfBoundsException();
-        for (int w: W) if (w < 0 || w >= G.V())
-            throw new java.lang.IndexOutOfBoundsException();
-        
-        this.parallelBFS(V, W);
-        Stack[] ans = new Stack[2];
-        if (anc == -1) {
-            this.cleanBFS();
-            return ans;
-        }
-        ans[0] = new Stack<>();
-        int tmp = anc;
-        ans[0].push(tmp);
-        while (edgeTo[tmp] != -1) {
-            ans[0].push(edgeTo[tmp]);
-            tmp = edgeTo[tmp];
-        }
-        
-        ans[1] = new Stack<>();
-        tmp = oth;
-        ans[1].push(anc);
-        ans[1].push(tmp);
-        while (edgeTo[tmp] != -1) {
-            ans[1].push(edgeTo[tmp]);
-            tmp = edgeTo[tmp];
-        }
-                
-        this.cleanBFS();
-        return ans;
-    }
-    
-    private String pathsToString(Stack<Integer>[] s) {
-        if (s[0] == null || s[1] == null) return "";
-        
-        StringBuilder ans = new StringBuilder();
-        
-        for (Stack<Integer> st: s) {
-            StringBuilder sb = new StringBuilder();
-            while (!st.isEmpty()) {
-                sb.append(st.pop());
-                sb.append("->");
-            }
-            if (sb.length() > 0) {
-                sb.deleteCharAt(sb.length() - 1);
-                sb.deleteCharAt(sb.length() - 1);
-            }
-            sb.append('\n');
-            ans.append(sb);
-        }
-        
-        ans.deleteCharAt(ans.length() - 1);
-        
-        return ans.toString();
-    }
 
     // do unit testing of this class
     public static void main(String[] args) {
@@ -380,7 +313,6 @@ public class SAP {
             int length   = sap.length(v, w);
             int ancestor = sap.ancestor(v, w);
             StdOut.printf("length = %d, ancestor = %d\n", length, ancestor);
-            StdOut.println(sap.pathsToString(sap.pathTo(v, w)));
         }
     }
 }

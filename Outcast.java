@@ -50,14 +50,9 @@ public class Outcast {
        String out = "";
        for (int i = 0; i < nouns.length; i++) {
            int d = 0;
-           System.out.println("Comparing " + nouns[i]);
            for (int j = 0; j < nouns.length; j++) {
-               System.out.print("with " + nouns[j]);
-               int dist = wordnet.distance(nouns[i], nouns[j]);
-               d += dist;
-               System.out.println("(" + dist + ")");
+               d += wordnet.distance(nouns[i], nouns[j]);;
            }
-           System.out.println("Total distance: " + d + "\n");
            if (d > sum) {
                sum = d;
                out = nouns[i];

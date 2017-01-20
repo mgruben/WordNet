@@ -198,42 +198,7 @@ public class WordNet {
             throw new java.lang.NullPointerException();
         return synMap.get(sap.ancestor(nouns.get(nounA), nouns.get(nounB)));
     }
-    
-    private Iterable<Integer> getSynsetIDs(String noun) {
-        return nouns.get(noun);
-    }
-    
-    private String getSynsetNames(int s) {
-        return synMap.get(s);
-    }
-    
-    
-    private String pathsToString(String nounA, String nounB) {
-        Stack<Integer>[] sta = sap.pathTo(nouns.get(nounA), nouns.get(nounB));
-        
-        if (sta[0] == null || sta[1] == null) return "";
-        
-        StringBuilder ans = new StringBuilder();
-        
-        for (Stack<Integer> st: sta) {
-            StringBuilder sb = new StringBuilder();
-            while (!st.isEmpty()) {
-                sb.append(getSynsetNames(st.pop()));
-                sb.append("->");
-            }
-            if (sb.length() > 0) {
-                sb.deleteCharAt(sb.length() - 1);
-                sb.deleteCharAt(sb.length() - 1);
-            }
-            sb.append('\n');
-            ans.append(sb);
-        }
-        
-        ans.deleteCharAt(ans.length() - 1);
-        
-        return ans.toString();
-    }
-    
+            
     // do unit testing of this class
     public static void main(String[] args) {
         WordNet wn = new WordNet(args[0], args[1]);
@@ -249,7 +214,6 @@ public class WordNet {
             String nounA = StdIn.readString();
             String nounB = StdIn.readString();
             StdOut.println("sap: " + wn.sap(nounA, nounB) + " (" + wn.distance(nounA, nounB) + ")");
-            StdOut.println(wn.pathsToString(nounA, nounB));
         }
 
     }
