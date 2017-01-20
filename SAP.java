@@ -29,17 +29,24 @@ import java.util.Arrays;
  * @author Michael <GrubenM@GMail.com>
  */
 public class SAP {
-    private Digraph G;              // The given digraph
-    private int[] distToLeft;       // For storing shortest paths
-    private int[] distToRight;      // For storing shortest paths
-    private int sp;         // The shortest path result of the BFS; -1 if none
-    private int anc;        // The common ancestor result of the BFS; -1 if none
+    // The given digraph
+    private Digraph G;
+    
+    // For storing shortest paths
+    private int[] distToLeft;
+    private int[] distToRight;
+    
+    // The shortest path result of the BFS; Integer.MAX_VALUE if none
+    private int sp;
+    
+    // The common ancestor result of the BFS; -1 if none
+    private int anc;
 
     private Stack<Integer> marked;  // Stores which vertices have been marked
     private Queue<Integer> vert;    // Stores the next vertices in BFS
     private Queue<Boolean> fam;     // The "family" to which the vertex belongs
-                                    // true is the V or left family, and
-                                    // false is the W or right family.
+                                    // true is the V or "left" family, and
+                                    // false is the W or "right" family.
     
     /**
      * Constructor takes a digraph (not necessarily a DAG).
@@ -48,7 +55,7 @@ public class SAP {
      * @throws NullPointerException if {@code G == null}
      */
     public SAP(Digraph G) {
-        // check for bad input
+        // check for null input
         if (G == null) throw new java.lang.NullPointerException();
         
         // Initialize our state variables
@@ -64,8 +71,8 @@ public class SAP {
         // Create a vertex-indexed array to keep track of distances and marking
         distToLeft = new int[this.G.V()];
         distToRight = new int[this.G.V()];
-                
-        // Adopt the convention that -1 means that this vertex is unmarked
+        
+        // Adopt the convention that -1 means that this vertex is unvisited
         Arrays.fill(distToLeft, -1);
         Arrays.fill(distToRight, -1);
     }
@@ -78,8 +85,8 @@ public class SAP {
      * This method leaves the BFS state fields in a dirty state; each method
      * that calls this method is responsible for cleaning the BFS itself.
      * 
-     * @param V The synset IDs of the first synset family in the parallel BFS
-     * @param W The synset IDs of the other synset family in the parallel BFS
+     * @param V The synset IDs of the left synset family in the parallel BFS
+     * @param W The synset IDs of the right synset family in the parallel BFS
      */
     private void parallelBFS(Iterable<Integer> V, Iterable<Integer> W) {
         
@@ -96,7 +103,7 @@ public class SAP {
          * interleaving.
          */
         
-        // enqueue synsets from our first family to search; mark them as seen
+        // enqueue synsets from our left family to search; mark them as visited
         for (int v: V) {
             vert.enqueue(v);
             marked.push(v);
@@ -104,9 +111,9 @@ public class SAP {
             fam.enqueue(true);
         }
         
-        // enqueue synsets from our other family to search; mark them as seen
+        // enqueue synsets from our right family to search; mark them as visited
         for (int w: W) {
-            // Check for collision in the list, before searching
+            // Check for collision among the given synsets, prior to search
             if (distToLeft[w] == 0) {
                 sp = 0;
                 anc = w;
@@ -126,22 +133,32 @@ public class SAP {
             boolean fromLeft = fam.dequeue();
             for (int adj: G.adj(i)) {
                 if (fromLeft) {
-                    // We've already been here before from this family
-                    if (distToLeft[adj] != -1) continue;
+                    /**
+                     * If the distance from the left is non-negative, then we've
+                     * already visited this synset from the left, so we've found
+                     * a cycle, and we already know all the distances that we
+                     * will encounter if we continue this cycle any further.
+                     * 
+                     * Thus, we don't enqueue any additional synsets, and we
+                     * don't mark or update anything.
+                     */
+                    if (distToLeft[adj] > -1) continue;
                     
                     /**
-                     * We've collided, indicating a successful breadth-first search.
+                     * We've collided, indicating a successful breadth-first
+                     * search.
                      * 
-                     * Note that, if the Digraph contains cycles, we won't know that
-                     * we've found the shortest ancestral path until the distance
-                     * exceeds the length of the shortest ancestral path found so
-                     * far.
+                     * Note that, if the Digraph contains cycles, we won't know
+                     * that we've found the shortest ancestral path until the
+                     * distance exceeds the length of the shortest ancestral
+                     * path found so far.
                      * 
-                     * Accordingly, check distance against that length, and return
-                     * when distance exceeds that best length.
+                     * Accordingly, check distance against that length, and
+                     * return when distance exceeds that best length.
                      * 
-                     * Save the state of the BFS in our instance variables, so that
-                     * individual methods can return from this state what they want.
+                     * Save the state of the BFS in our instance variables, so
+                     * that individual methods can return from this state what
+                     * they want.
                      */
                     if (distToRight[adj] != -1 &&
                         distToLeft[i] + 1 + distToRight[adj] < sp) {
@@ -158,22 +175,34 @@ public class SAP {
                     if (distToLeft[i] + 1 > sp) return;
                 }
                     
-                else {
-                    // We've already been here before from this family
-                    if (distToRight[adj] != -1) continue;
+                else { //if (!fromLeft)
                     /**
-                     * We've collided, indicating a successful breadth-first search.
+                     * If the distance from the right is non-negative, then
+                     * we've already visited this synset from the right, so
+                     * we've found a cycle, and we already know all the
+                     * distances that we will encounter if we continue this
+                     * cycle any further.
                      * 
-                     * Note that, if the Digraph contains cycles, we won't know that
-                     * we've found the shortest ancestral path until the distance
-                     * exceeds the length of the shortest ancestral path found so
-                     * far.
+                     * Thus, we don't enqueue any additional synsets, and we
+                     * don't mark or update anything.
+                     */
+                    if (distToRight[adj] != -1) continue;
+                    
+                    /**
+                     * We've collided, indicating a successful breadth-first
+                     * search.
                      * 
-                     * Accordingly, check distance against that length, and return
-                     * when distance exceeds that best length.
+                     * Note that, if the Digraph contains cycles, we won't know
+                     * that we've found the shortest ancestral path until the
+                     * distance exceeds the length of the shortest ancestral
+                     * path found so far.
                      * 
-                     * Save the state of the BFS in our instance variables, so that
-                     * individual methods can return from this state what they want.
+                     * Accordingly, check distance against that length, and
+                     * return when distance exceeds that best length.
+                     * 
+                     * Save the state of the BFS in our instance variables, so
+                     * that individual methods can return from this state what
+                     * they want.
                      */
                     if (distToLeft[adj] != -1 &&
                         distToRight[i] + 1 + distToLeft[adj] < sp) {
@@ -208,8 +237,7 @@ public class SAP {
         /** 
          * Unmark all marked vertices to efficiently re-initialize.
          * 
-         * This sets all entries in distTo and edgeTo to -1, and
-         * sets all entries is fam to 0.
+         * This sets all entries in distToLeft and distToRight to -1.
          */
         while (!marked.isEmpty()) {
             int m = marked.pop();
@@ -217,7 +245,7 @@ public class SAP {
             distToRight[m] = -1;
         }
         
-        // Clear the queue of vertices
+        // Clear the queues of vertices, should they still have any
         vert = new Queue<>();
         fam = new Queue<>();
         
@@ -228,8 +256,8 @@ public class SAP {
     /**
      * Length of shortest ancestral path between v and w; -1 if no such path.
      * 
-     * @param v The synset ID of the first synset in the sap
-     * @param w The synset ID of the other synset in the sap
+     * @param v The synset ID of the left synset in the sap
+     * @param w The synset ID of the right synset in the sap
      * @throws IndexOutOfBoundsException if <em>v</em> or <em>w</em> is outside
      *         of the range {@code [0, G.V() - 1)}
      * @return the length of the shortest ancestral path between <em>v</em> and
@@ -246,7 +274,11 @@ public class SAP {
         W.enqueue(w);
         
         this.parallelBFS(V, W);
+        
+        // Grab state variable to return
         int ans = sp;
+        
+        // Reset state
         this.cleanBFS();
         if (ans == Integer.MAX_VALUE) return -1;
         else return ans;
@@ -256,8 +288,8 @@ public class SAP {
      * A common ancestor of v and w that participates in a shortest ancestral
      * path; -1 if no such path.
      * 
-     * @param v The synset ID of the first synset in the sap
-     * @param w The synset ID of the other synset in the sap
+     * @param v The synset ID of the left synset in the sap
+     * @param w The synset ID of the right synset in the sap
      * @throws IndexOutOfBoundsException if <em>v</em> or <em>w</em> is outside
      *         of the range {@code [0, G.V() - 1)}
      * @return the synset ID of the common ancestor of <em>v</em> and <em>w</em>
@@ -275,7 +307,11 @@ public class SAP {
         W.enqueue(w);
         
         this.parallelBFS(V, W);
+        
+        // Grab state variable to return
         int ans = anc;
+        
+        // Reset state
         this.cleanBFS();
         return ans;
     }
@@ -284,8 +320,8 @@ public class SAP {
      * Length of shortest ancestral path between any vertex in v and any vertex
      * in w; -1 if no such path.
      * 
-     * @param V The iterable of the first synset family in the sap
-     * @param W The iterable of the other synset family in the sap
+     * @param V The iterable of the left synset family in the sap
+     * @param W The iterable of the right synset family in the sap
      * @throws NullPointerException if {@code v == null}
      * @throws NullPointerException if {@code w == null}
      * @throws IndexOutOfBoundsException if any vertex in <em>V</em> or
@@ -302,7 +338,11 @@ public class SAP {
             throw new java.lang.IndexOutOfBoundsException();
         
         this.parallelBFS(V, W);
+        
+        // Grab state variable to return
         int ans = sp;
+        
+        // Reset state
         this.cleanBFS();
         if (ans == Integer.MAX_VALUE) return -1;
         else return ans;
@@ -312,8 +352,8 @@ public class SAP {
      * A common ancestor that participates in shortest ancestral path; -1 if no
      * such path.
      * 
-     * @param V The iterable of the first synset family in the sap
-     * @param W The iterable of the other synset family in the sap
+     * @param V The iterable of the left synset family in the sap
+     * @param W The iterable of the right synset family in the sap
      * @throws NullPointerException if {@code v == null}
      * @throws NullPointerException if {@code w == null}
      * @throws IndexOutOfBoundsException if any vertex in <em>V</em> or
@@ -330,7 +370,11 @@ public class SAP {
             throw new java.lang.IndexOutOfBoundsException();
         
         this.parallelBFS(V, W);
+        
+        // Grab state variable to return
         int ans = anc;
+        
+        // Reset state
         this.cleanBFS();
         return ans;
     }
